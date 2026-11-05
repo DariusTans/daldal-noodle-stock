@@ -4,12 +4,19 @@
  */
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
-import { latestCounts, parseQuantity, roles, type CountLine, type CountRound } from '@/domain';
+import {
+  latestCounts,
+  parseQuantity,
+  roles,
+  workflowTasks,
+  type CountLine,
+  type CountRound,
+} from '@/domain';
 import { fmtDateTime } from '../lib/format';
 import { useAction, useShop } from '../state';
 import { Dialog, FieldGrid, FormError, Input, PageHeader, Textarea } from '../ui';
 import { ActionDialog, str } from './common';
-import { useFlow } from './Home';
+import { Handoff, useFlow } from './Home';
 
 const LABEL = {
   draft: 'กำลังนับ',
@@ -35,7 +42,7 @@ const Note = ({ children }: { children: React.ReactNode }) => (
 );
 
 export function CountingPage() {
-  const { state, can } = useShop();
+  const { state, can, me } = useShop();
   const [params, setParams] = useSearchParams();
   const [creating, setCreating] = useState(false);
   const active = state.countRounds.find((r) => r.status === 'draft' || r.status === 'review');
@@ -74,6 +81,28 @@ export function CountingPage() {
               </button>
             )}
           </div>
+        }
+      />
+      <Handoff
+        page="counting"
+        local="#confirm-count,#save-count"
+        tasks={
+          selected?.status === 'confirmed' && !listMode
+            ? [
+                {
+                  title: selected.title,
+                  status: 'ยอดนับยืนยันแล้ว',
+                  done: 'รอบนี้ล็อกแล้ว · ยอดรับ/เบิกถัดไปจะอ้างอิงรอบนี้',
+                  who: 'พนักงาน / ผู้จัดการ',
+                  page: 'movements',
+                  id: '',
+                  action: '',
+                  can: true,
+                },
+              ]
+            : workflowTasks(state, me.role).filter(
+                (t) => t.page === 'counting' && (!selected || listMode || selected.id === t.id),
+              )
         }
       />
       {selected && !listMode ? (

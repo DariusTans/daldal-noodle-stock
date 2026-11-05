@@ -87,3 +87,65 @@ export function HomePage() {
     </>
   );
 }
+
+/**
+ * Legacy "สถานะและขั้นตอนถัดไป" panel (workflow-ui decorate), placed right after the page head.
+ * `local` = selector of the in-page control; tasks for this page then scroll to it instead.
+ */
+export function Handoff({
+  tasks,
+  page,
+  local,
+}: {
+  tasks: Array<
+    Pick<WorkflowTask, 'title' | 'status' | 'done' | 'who' | 'page' | 'id' | 'action' | 'can'> & {
+      key?: string;
+    }
+  >;
+  page: string;
+  local?: string;
+}) {
+  const flow = useFlow();
+  if (!tasks.length) return null;
+  return (
+    <section className="handoff-panel">
+      <h2>สถานะและขั้นตอนถัดไป</h2>
+      <div className="handoff-list">
+        {tasks.map((t, i) => (
+          <article key={t.key ?? i}>
+            <div>
+              <b>
+                {t.title} · {t.status}
+              </b>
+              <p>{t.done}</p>
+              <small>ทำต่อโดย {t.who}</small>
+            </div>
+            {!t.can ? (
+              <span className="chip off">รอผู้ตรวจ</span>
+            ) : t.page === page && local && document.querySelector(local) ? (
+              <button
+                className="primary"
+                type="button"
+                onClick={() =>
+                  document
+                    .querySelector(local)
+                    ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                }
+              >
+                ไปยังงานที่ต้องทำ ↓
+              </button>
+            ) : (
+              <button
+                className="primary"
+                type="button"
+                onClick={() => flow(t.page, t.id, t.action)}
+              >
+                ทำต่อ →
+              </button>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
