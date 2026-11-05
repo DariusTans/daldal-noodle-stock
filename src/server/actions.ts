@@ -59,7 +59,7 @@ async function storedAttachment(ctx: ActionContext, evidenceId: string): Promise
     if (!bytes) throw new HttpError(422, 'evidence', 'ยังอัปโหลดไฟล์หลักฐานไม่เสร็จ');
     if (
       bytes.length !== row.size_bytes ||
-      sha256Hex(bytes) !== row.sha256 ||
+      (await sha256Hex(bytes)) !== row.sha256 ||
       sniffType(bytes) !== row.mime
     )
       throw new HttpError(422, 'evidence', 'ไฟล์หลักฐานไม่ตรงกับที่แจ้งไว้ กรุณาอัปโหลดใหม่');

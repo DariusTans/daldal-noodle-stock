@@ -1,7 +1,10 @@
-import { createHash } from 'node:crypto';
 import type { AttachmentType } from '../domain/index.js';
 
-export const sha256Hex = (bytes: Uint8Array) => createHash('sha256').update(bytes).digest('hex');
+/** sha-256 as lowercase hex (Web Crypto: works in Node 20+, Vercel and browsers). */
+export async function sha256Hex(bytes: Uint8Array): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', bytes as Uint8Array<ArrayBuffer>);
+  return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
 
 const startsWith = (b: Uint8Array, sig: number[], offset = 0) =>
   sig.every((x, i) => b[offset + i] === x);

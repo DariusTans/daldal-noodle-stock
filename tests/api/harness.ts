@@ -8,6 +8,7 @@ import type { ShopState } from '../../src/domain';
 import { createApp } from '../../src/server/app';
 import { HttpError } from '../../src/server/http';
 import type { Deps, EvidenceRow, Member, Membership, Repo } from '../../src/server/ports';
+import { emptyMemoryData, memoryBackend } from '../../src/server/memory';
 import { freshDatabase } from '../db/pglite';
 
 type Row = Record<string, unknown>;
@@ -141,8 +142,12 @@ export function pgliteRepo(db: PGlite): Repo {
   };
 }
 
+export type HarnessKind = 'pglite' | 'memory';
+
 export interface Harness {
-  db: PGlite;
+  kind: HarnessKind;
+  /** PGlite database (pglite harness only). */
+  db: PGlite | null;
   call: (
     method: string,
     path: string,
@@ -155,7 +160,44 @@ export interface Harness {
   objects: Map<string, Uint8Array>;
 }
 
-export async function harness(): Promise<Harness> {
+function caller(handle: (req: Request) => Promise<Response>): Harness['call'] {
+  return async (method, path, opts = {}) => {
+    const headers: Record<string, string> = {};
+    if (opts.as) headers.authorization = 'Bearer ' + opts.as;
+    if (opts.body !== undefined) headers['content-type'] = 'application/json';
+    const res = await handle(
+      new Request('https://daldal.test' + path, {
+        method,
+        headers,
+        body: opts.body === undefined ? undefined : JSON.stringify(opts.body),
+      }),
+    );
+    const raw = new Uint8Array(await res.arrayBuffer());
+    const bom = raw[0] === 0xef && raw[1] === 0xbb && raw[2] === 0xbf;
+    const text = new TextDecoder().decode(raw);
+    let body: unknown = text;
+    try {
+      body = JSON.parse(text);
+    } catch {
+      /* CSV etc. */
+    }
+    return { status: res.status, body, headers: res.headers, bom };
+  };
+}
+
+export async function harness(kind: HarnessKind = 'pglite'): Promise<Harness> {
+  if (kind === 'memory') {
+    const objects = new Map<string, Uint8Array>();
+    const backend = memoryBackend(emptyMemoryData(), objects);
+    return {
+      kind,
+      db: null,
+      objects,
+      call: caller(createApp(backend.deps)),
+      signUp: async (email) => backend.signIn(email),
+      upload: backend.upload,
+    };
+  }
   const db = await freshDatabase();
   const tokens = new Map<string, string>(); // token → userId
   const uploads = new Map<string, string>(); // upload token → path
@@ -190,6 +232,7 @@ export async function harness(): Promise<Harness> {
   const handle = createApp(deps);
 
   return {
+    kind,
     db,
     objects,
     async signUp(email) {
@@ -203,27 +246,6 @@ export async function harness(): Promise<Harness> {
       if (!path) throw new Error('unknown upload token');
       objects.set(path, bytes);
     },
-    async call(method, path, opts = {}) {
-      const headers: Record<string, string> = {};
-      if (opts.as) headers.authorization = 'Bearer ' + opts.as;
-      if (opts.body !== undefined) headers['content-type'] = 'application/json';
-      const res = await handle(
-        new Request('https://daldal.test' + path, {
-          method,
-          headers,
-          body: opts.body === undefined ? undefined : JSON.stringify(opts.body),
-        }),
-      );
-      const raw = new Uint8Array(await res.arrayBuffer());
-      const bom = raw[0] === 0xef && raw[1] === 0xbb && raw[2] === 0xbf;
-      const text = new TextDecoder().decode(raw);
-      let body: unknown = text;
-      try {
-        body = JSON.parse(text);
-      } catch {
-        /* CSV etc. */
-      }
-      return { status: res.status, body, headers: res.headers, bom };
-    },
+    call: caller(handle),
   };
 }
