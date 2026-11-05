@@ -3,6 +3,8 @@
 Rebuild จาก prototype v0.8.1 เป็น **Vite + React 19 + TypeScript + Supabase** และ deploy บน **Vercel**
 
 ## โครงสร้าง
+แผนภาพภาพรวมระบบ (deploy, ชั้นโค้ด, ลำดับการทำรายการ, flow ธุรกิจ, สถานะเอกสาร, ฐานข้อมูล, สิทธิ์, การทดสอบ): [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+
 ```
 legacy/        prototype v0.8.1 เดิมทุกไบต์ (ห้ามแก้) ใช้เป็น oracle สำหรับ parity test
 src/domain/    กฎธุรกิจ TS แบบ pure (แปลงจาก legacy/assets/*-core.js) ใช้ทั้ง client และ /api
