@@ -29,7 +29,7 @@ npm run legacy:test  # unit tests เดิม
 - [x] Phase 1: domain layer TS + parity test (`src/domain`, 37 operations, เทียบ legacy ด้วย demo seed + fuzz 3,600 ขั้น + migration v1–6)
 - [x] Phase 2: Supabase schema + RLS (`supabase/migrations`, ทดสอบใน PGlite: `npm run test:db`)
 - [x] Phase 3: API บน Vercel Functions (`src/server`, `api/`) — ทดสอบ integration กับ migrations จริงใน PGlite
-- [ ] Phase 4: React UI + Auth + demo mode
+- [x] Phase 4: React UI 13 หน้า + login (Supabase) + โหมดทดลอง offline — E2E ด้วย Playwright (`npm run test:e2e`)
 - [ ] Phase 5: Vercel deploy + CI
 
 ## Domain (`src/domain`)
@@ -37,6 +37,15 @@ npm run legacy:test  # unit tests เดิม
 - รูปแบบ state = JSON schemaVersion 6 เดียวกับ prototype → import backup เดิมได้ด้วย `D.migrate()`
 - `D.withRuntime({ now, random }, fn)` ตรึงเวลาและ id (server/test)
 - `tests/domain/parity.test.ts` เทียบกับ legacy ทุก operation, `tests/domain/rules.test.ts` กฎ 11 ข้อแบบอ่านง่าย
+
+## Frontend (`src/app`)
+- `npm run dev` → http://localhost:5173 · ถ้าไม่ได้ตั้ง `VITE_SUPABASE_*` แอปจะเปิด **โหมดทดลอง** อัตโนมัติ
+- **โหมดทดลอง**: API ตัวเดียวกับ server (`createApp`) รันในแท็บนี้บน store ในหน่วยความจำที่บันทึกลง localStorage
+  มีสมาชิกตัวอย่าง 3 คน สลับดูมุมมองเจ้าของ / ผู้จัดการ / พนักงานได้จากแถบด้านบน · เปิดหลายแท็บแล้วชนกันจะได้ 409 เหมือนของจริง
+- **โหมด cloud**: login ด้วย Supabase (รหัสผ่าน หรือ magic link) แล้วเรียก `/api` บน Vercel
+- หน้าจอ: งานวันนี้ · นับและยืนยัน · ยอดนับล่าสุด · เคลื่อนไหว/ตรวจครบ · เตือนซื้อ/เสนอซื้อ · จัดซื้อและอนุมัติ · ตรวจรับ ·
+  ค่าใช้จ่าย · รายงาน · ตั้งค่าเกณฑ์ · ทะเบียนวัตถุดิบ · หน่วยนับ · สมาชิก/สำรองข้อมูล
+- ฟอร์มไม่ตรวจกฎซ้ำฝั่ง client: ส่งให้ domain ตรวจแล้วแสดงข้อความ (422) · `useAction` จัดการ idempotency key, retry และ 409 ให้
 
 ## Database (`supabase/`)
 | ตาราง | ใช้ทำอะไร | client (authenticated) |

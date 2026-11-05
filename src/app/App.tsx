@@ -1,11 +1,29 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router';
+import { Gate, LoginPage, NewShopPage } from './pages/Entry';
+import { ShopLayout } from './pages/Layout';
+import { BackendProvider, ToastProvider } from './state';
+
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 5_000, retry: 1 } },
+});
+
+const router = createBrowserRouter([
+  { path: '/', element: <Gate /> },
+  { path: '/login', element: <LoginPage /> },
+  { path: '/new-shop', element: <NewShopPage /> },
+  { path: '/s/:shopId/:page?', element: <ShopLayout /> },
+  { path: '*', element: <Navigate to="/" replace /> },
+]);
+
 export function App() {
   return (
-    <main className="mx-auto flex min-h-svh max-w-xl flex-col justify-center gap-3 p-6">
-      <span className="text-sm font-semibold tracking-widest text-brand">DALDAL · v1 alpha</span>
-      <h1 className="text-3xl font-bold">ระบบจัดการร้าน</h1>
-      <p className="text-slate-600">
-        กำลังย้ายจาก prototype ไปเป็น React + TypeScript + Supabase ดูแผนงานใน README
-      </p>
-    </main>
+    <QueryClientProvider client={queryClient}>
+      <BackendProvider>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </BackendProvider>
+    </QueryClientProvider>
   );
 }

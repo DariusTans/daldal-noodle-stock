@@ -7,6 +7,8 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   server: { port: 5173 },
+  // main chunk = react + router + query + domain rules (~150 KB gzip); backends are lazy chunks
+  build: { chunkSizeWarningLimit: 600 },
   test: {
     include: ['tests/**/*.test.ts'],
     environment: 'node',
