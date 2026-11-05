@@ -1,206 +1,189 @@
+/**
+ * ตั้งค่าร้าน — legacy workflow-ui settings() (link cards).
+ * The purchase-approval and expense-reviewer forms are dialogs opened from the buy / expenses
+ * pages (?action=policy), as in the prototype; approver/reviewer are picked among members.
+ */
 import { currencies } from '@/domain';
-import { fmtDateTime, fmtMoney, moneyInput, roleName } from '../lib/format';
+import { fmtMoney, moneyInput, roleName } from '../lib/format';
 import { useShop } from '../state';
-import { Card, Check, Empty, Input, PageHeader, Select, Table, Td, Textarea } from '../ui';
-import { ActionDialog, bool, DialogButton, opt, str } from './common';
+import { Check, FieldGrid, Input, PageHeader, Select, Textarea } from '../ui';
+import { ActionDialog, bool, opt, str } from './common';
+import { useFlow } from './Home';
 
 export function SettingsPage() {
-  const { state, members, me, view } = useShop();
-  const owner = me.role === 'owner';
-  const reviewers = members.filter((m) => m.active && m.role !== 'staff');
-  const policy = state.purchasePolicy;
-  const reviewer = state.expenseReviewer;
-  const options = reviewers.map((m): [string, string] => [
-    m.userId,
-    `${m.displayName} (${roleName(m.role)})`,
-  ]);
-  const memberIdByName = (name: string | undefined) =>
-    reviewers.find((m) => m.displayName === name)?.userId;
-
-  if (view.redacted)
-    return (
-      <>
-        <PageHeader eyebrow="ตั้งค่า" title="ตั้งค่าร้าน / เกณฑ์" />
-        <Empty>
-          เกณฑ์อนุมัติและผู้ตรวจค่าใช้จ่ายแสดงเฉพาะผู้จัดการและเจ้าของ ·
-          จุดเตือนซื้อดูได้ที่หน้าเตือนซื้อ
-        </Empty>
-      </>
-    );
-
+  const { state } = useShop();
+  const flow = useFlow();
+  const link = (page: string, label: string, action = '') => (
+    <button className="secondary" type="button" onClick={() => flow(page, '', action)}>
+      {label}
+    </button>
+  );
   return (
     <>
       <PageHeader
-        eyebrow="ตั้งค่า"
-        title="ตั้งค่าร้าน / เกณฑ์"
-        sub="ผู้อนุมัติและผู้ตรวจต้องเป็นสมาชิกบทบาทเจ้าของหรือผู้จัดการ · เปลี่ยนเกณฑ์แล้ว รายการที่ส่งพิจารณาไว้ต้องส่งใหม่"
+        eyebrow="WORKSPACE SETTINGS"
+        title="ตั้งค่าร้าน"
+        sub="ข้อมูลตั้งต้น เกณฑ์ และบทบาททดลอง"
       />
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card
-          title="เกณฑ์อนุมัติจัดซื้อ"
-          actions={
-            owner && (
-              <DialogButton label={policy ? 'แก้ไข' : 'ตั้งเกณฑ์'} variant="primary" size="sm">
-                {(close, open) => (
-                  <ActionDialog
-                    open={open}
-                    onClose={close}
-                    title="เกณฑ์อนุมัติจัดซื้อ"
-                    submit={(f, run) =>
-                      run(
-                        'savePurchasePolicy',
-                        {
-                          currency: str(f, 'currency') as 'THB',
-                          mode: str(f, 'mode') as 'all',
-                          threshold: opt(f, 'threshold'),
-                          approverUserId: str(f, 'approver'),
-                          note: str(f, 'note'),
-                          checked: bool(f, 'checked'),
-                        },
-                        'บันทึกเกณฑ์แล้ว',
-                      )
-                    }
-                  >
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <Select
-                        label="ผู้อนุมัติ"
-                        name="approver"
-                        defaultValue={memberIdByName(policy?.approver)}
-                        options={options}
-                      />
-                      <Select
-                        label="สกุลเงิน"
-                        name="currency"
-                        defaultValue={policy?.currency ?? 'THB'}
-                        options={currencies.map((c) => [c, c])}
-                      />
-                      <Select
-                        label="รูปแบบ"
-                        name="mode"
-                        defaultValue={policy?.mode ?? 'all'}
-                        options={[
-                          ['all', 'พิจารณาทุกรายการ'],
-                          ['above', 'พิจารณาเมื่อเกินวงเงิน'],
-                        ]}
-                      />
-                      <Input
-                        label="วงเงิน (เฉพาะแบบเกินวงเงิน)"
-                        name="threshold"
-                        defaultValue={policy ? moneyInput(policy.threshold) : ''}
-                        inputMode="decimal"
-                      />
-                    </div>
-                    <Textarea
-                      label="ที่มา / ขอบเขตเกณฑ์"
-                      name="note"
-                      defaultValue={policy?.note}
-                      required
-                      maxLength={500}
-                    />
-                    <Check name="checked" label="ตกลงเกณฑ์นี้กับเจ้าของร้านแล้ว" />
-                  </ActionDialog>
-                )}
-              </DialogButton>
-            )
-          }
-        >
-          {policy ? (
-            <dl className="grid gap-1 text-sm">
-              <dd>
-                ผู้อนุมัติ: <b>{policy.approver}</b> ({roleName(policy.approverRole)})
-              </dd>
-              <dd>
-                {policy.mode === 'all'
-                  ? 'พิจารณาทุกรายการ'
-                  : `พิจารณาเมื่อยอดเกิน ${fmtMoney(policy.threshold, policy.currency)}`}
-              </dd>
-              <dd className="text-stone-600">{policy.note}</dd>
-              <dd className="text-xs text-stone-500">
-                ตั้งโดย {policy.person} · {fmtDateTime(policy.at)}
-              </dd>
-            </dl>
-          ) : (
-            <Empty>ยังไม่ตั้งเกณฑ์ — ส่งพิจารณาใบจัดซื้อไม่ได้จนกว่าจะตั้ง</Empty>
-          )}
-        </Card>
-
-        <Card
-          title="ผู้ตรวจค่าใช้จ่าย"
-          actions={
-            owner && (
-              <DialogButton
-                label={reviewer ? 'เปลี่ยน' : 'ตั้งผู้ตรวจ'}
-                variant="primary"
-                size="sm"
-              >
-                {(close, open) => (
-                  <ActionDialog
-                    open={open}
-                    onClose={close}
-                    title="ผู้ตรวจค่าใช้จ่าย"
-                    submit={(f, run) =>
-                      run(
-                        'saveExpenseReviewer',
-                        {
-                          reviewerUserId: str(f, 'reviewer'),
-                          note: str(f, 'note'),
-                          checked: bool(f, 'checked'),
-                        },
-                        'บันทึกผู้ตรวจแล้ว',
-                      )
-                    }
-                  >
-                    <Select
-                      label="ผู้ตรวจ"
-                      name="reviewer"
-                      defaultValue={memberIdByName(reviewer?.name)}
-                      options={options}
-                    />
-                    <Textarea
-                      label="ขอบเขตการตรวจ"
-                      name="note"
-                      defaultValue={reviewer?.note}
-                      required
-                      maxLength={500}
-                    />
-                    <Check name="checked" label="ตกลงผู้ตรวจนี้กับเจ้าของร้านแล้ว" />
-                  </ActionDialog>
-                )}
-              </DialogButton>
-            )
-          }
-        >
-          {reviewer ? (
-            <dl className="grid gap-1 text-sm">
-              <dd>
-                ผู้ตรวจ: <b>{reviewer.name}</b> ({roleName(reviewer.role)})
-              </dd>
-              <dd className="text-stone-600">{reviewer.note}</dd>
-              <dd className="text-xs text-stone-500">
-                ตั้งโดย {reviewer.person} · {fmtDateTime(reviewer.at)}
-              </dd>
-            </dl>
-          ) : (
-            <Empty>ยังไม่ตั้งผู้ตรวจ — ส่งตรวจค่าใช้จ่ายไม่ได้จนกว่าจะตั้ง</Empty>
-          )}
-        </Card>
+      <div className="task-grid">
+        <section className="task-card">
+          <h3>ข้อมูลวัตถุดิบ</h3>
+          <p>ทะเบียน หน่วยนับ และจุดเตือน</p>
+          {link('ingredients', 'ทะเบียนวัตถุดิบ')}
+          {link('units', 'หน่วยนับ')}
+          {link('alerts', 'จุดเตือนซื้อ', 'settings')}
+        </section>
+        <section className="task-card">
+          <h3>เกณฑ์และผู้ตรวจ</h3>
+          <p>ไม่มีชื่อหรือวงเงินที่ระบบกำหนดแทนร้าน</p>
+          {link('buy', 'เกณฑ์อนุมัติซื้อ', 'policy')}
+          {link('expenses', 'ผู้ตรวจค่าใช้จ่าย', 'policy')}
+          <small>
+            ผู้พิจารณาซื้อ: {state.purchasePolicy?.approver ?? 'ยังไม่ตั้ง'}
+            <br />
+            ผู้ตรวจบิล: {state.expenseReviewer?.name ?? 'ยังไม่ตั้ง'}
+          </small>
+        </section>
+        <section className="task-card">
+          <h3>บทบาทและข้อมูล</h3>
+          <p>สมาชิก สิทธิ์ สำรอง และนำเข้า</p>
+          {link('roles', 'บทบาท / สำรองข้อมูล')}
+        </section>
       </div>
-      <Card title="ประวัติเกณฑ์อนุมัติ" className="mt-4">
-        <Table head={['เวลา', 'ผู้อนุมัติ', 'เกณฑ์', 'ตั้งโดย']} empty="ยังไม่มีประวัติ">
-          {[...state.purchasePolicyAudit].reverse().map((p) => (
-            <tr key={p.id}>
-              <Td>{fmtDateTime(p.at)}</Td>
-              <Td>
-                {p.approver} ({roleName(p.approverRole)})
-              </Td>
-              <Td>
-                {p.mode === 'all' ? 'ทุกรายการ' : `เกิน ${fmtMoney(p.threshold, p.currency)}`}
-              </Td>
-              <Td>{p.person}</Td>
-            </tr>
-          ))}
-        </Table>
-      </Card>
     </>
+  );
+}
+
+function useReviewerOptions() {
+  const { members } = useShop();
+  const reviewers = members.filter((m) => m.active && m.role !== 'staff');
+  return {
+    options: reviewers.map((m): [string, string] => [
+      m.userId,
+      `${m.displayName} (${roleName(m.role)})`,
+    ]),
+    idByName: (name: string | undefined) => reviewers.find((m) => m.displayName === name)?.userId,
+  };
+}
+
+/** Owner: purchase approval policy (opened from the buy page). */
+export function PurchasePolicyDialog({ onClose }: { onClose: () => void }) {
+  const { state } = useShop();
+  const { options, idByName } = useReviewerOptions();
+  const p = state.purchasePolicy;
+  return (
+    <ActionDialog
+      open
+      onClose={onClose}
+      eyebrow="BUY / APPROVAL POLICY"
+      title="เกณฑ์อนุมัติซื้อ"
+      submitLabel="บันทึกเกณฑ์"
+      submit={(f, run) =>
+        run(
+          'savePurchasePolicy',
+          {
+            currency: str(f, 'currency') as 'THB',
+            mode: str(f, 'mode') as 'all',
+            threshold: opt(f, 'threshold'),
+            approverUserId: str(f, 'approver'),
+            note: str(f, 'note'),
+            checked: bool(f, 'checked'),
+          },
+          'บันทึกเกณฑ์แล้ว',
+        )
+      }
+    >
+      <p className="muted">
+        {p
+          ? `ปัจจุบัน: ${p.mode === 'all' ? 'พิจารณาทุกรายการ' : 'พิจารณาเมื่อเกิน ' + fmtMoney(p.threshold, p.currency)} · ผู้พิจารณา ${p.approver}`
+          : 'ยังไม่ตั้งเกณฑ์ ส่งพิจารณาใบจัดซื้อไม่ได้จนกว่าจะตั้ง'}{' '}
+        · เปลี่ยนเกณฑ์แล้ว รายการที่ส่งพิจารณาไว้ต้องส่งใหม่
+      </p>
+      <FieldGrid>
+        <Select
+          label="ผู้พิจารณา (สมาชิกเจ้าของ / ผู้จัดการ) *"
+          name="approver"
+          wide
+          defaultValue={idByName(p?.approver)}
+          options={options}
+        />
+        <Select
+          label="รูปแบบ *"
+          name="mode"
+          defaultValue={p?.mode ?? 'all'}
+          options={[
+            ['all', 'พิจารณาทุกรายการ'],
+            ['above', 'พิจารณาเมื่อเกินวงเงิน'],
+          ]}
+        />
+        <Select
+          label="สกุลเงิน *"
+          name="currency"
+          defaultValue={p?.currency ?? 'THB'}
+          options={currencies.map((c) => [c, c])}
+        />
+        <Input
+          label="วงเงิน (เฉพาะแบบเกินวงเงิน)"
+          name="threshold"
+          inputMode="decimal"
+          defaultValue={p ? moneyInput(p.threshold) : ''}
+          wide
+        />
+        <Textarea
+          label="ที่มา / ขอบเขตเกณฑ์ *"
+          name="note"
+          required
+          maxLength={500}
+          defaultValue={p?.note}
+        />
+      </FieldGrid>
+      <Check name="checked" required label="ตกลงเกณฑ์นี้กับร้านแล้ว ไม่ใช่ค่าที่ระบบกำหนดแทน" />
+    </ActionDialog>
+  );
+}
+
+/** Owner: expense reviewer (opened from the expenses page). */
+export function ExpenseReviewerDialog({ onClose }: { onClose: () => void }) {
+  const { state } = useShop();
+  const { options, idByName } = useReviewerOptions();
+  const r = state.expenseReviewer;
+  return (
+    <ActionDialog
+      open
+      onClose={onClose}
+      eyebrow="EXPENSES / REVIEWER"
+      title="ผู้ตรวจค่าใช้จ่าย"
+      submitLabel="บันทึกผู้ตรวจ"
+      submit={(f, run) =>
+        run(
+          'saveExpenseReviewer',
+          { reviewerUserId: str(f, 'reviewer'), note: str(f, 'note'), checked: bool(f, 'checked') },
+          'บันทึกผู้ตรวจแล้ว',
+        )
+      }
+    >
+      <p className="muted">
+        {r
+          ? `ปัจจุบัน: ${r.name} (${roleName(r.role)})`
+          : 'ยังไม่ตั้งผู้ตรวจ ส่งตรวจค่าใช้จ่ายไม่ได้จนกว่าจะตั้ง'}
+      </p>
+      <FieldGrid>
+        <Select
+          label="ผู้ตรวจ (สมาชิกเจ้าของ / ผู้จัดการ) *"
+          name="reviewer"
+          wide
+          defaultValue={idByName(r?.name)}
+          options={options}
+        />
+        <Textarea
+          label="ขอบเขตการตรวจ *"
+          name="note"
+          required
+          maxLength={500}
+          defaultValue={r?.note}
+        />
+      </FieldGrid>
+      <Check name="checked" required label="ตกลงผู้ตรวจนี้กับร้านแล้ว" />
+    </ActionDialog>
   );
 }
