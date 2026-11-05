@@ -13,7 +13,7 @@ import {
 } from '../state';
 import { FormError } from '../ui';
 import { BuyPage } from './Buy';
-import { CountingPage } from './Counting';
+import { CountingPage, LatestPage } from './Counting';
 import { DashboardPage } from './Dashboard';
 import { Loading } from './Entry';
 import { ExpensesPage } from './Expenses';
@@ -22,7 +22,7 @@ import { IngredientsPage, UnitsPage } from './MasterData';
 import { MembersPage } from './Members';
 import { ReceivingPage } from './Receiving';
 import { SettingsPage } from './Settings';
-import { AlertsPage, LatestPage, MovementsPage } from './Stock';
+import { AlertsPage, MovementsPage } from './Stock';
 
 interface PageDef {
   key: string;
@@ -82,7 +82,14 @@ export const PAGES: PageDef[] = [
     icon: '▧',
     component: ExpensesPage,
   },
-  { key: 'dashboard', label: 'รายงาน', section: 'รายงาน', icon: '◫', component: DashboardPage },
+  {
+    key: 'dashboard',
+    label: 'รายงาน',
+    crumb: 'Dashboard และรายงาน',
+    section: 'รายงาน',
+    icon: '◫',
+    component: DashboardPage,
+  },
   {
     key: 'settings',
     label: 'ตั้งค่าร้าน / เกณฑ์',
@@ -183,7 +190,9 @@ function Frame({ page }: { page: string }) {
           <span className="brand-caption">NOODLE HOUSE / OPERATIONS</span>
         </a>
         <div className="shop">
-          <span className="shop-icon">{/[A-Za-z]/.exec(me.shopName)?.[0]?.toUpperCase() ?? 'D'}</span>
+          <span className="shop-icon">
+            {/[A-Za-z]/.exec(me.shopName)?.[0]?.toUpperCase() ?? 'D'}
+          </span>
           <div>
             {me.shopName}
             <small>{me.displayName}</small>
@@ -232,12 +241,8 @@ function Frame({ page }: { page: string }) {
   );
 }
 
-const initials = (name: string) =>
-  name
-    .replace(/ตัวอย่าง$/, '')
-    .trim()
-    .slice(0, 2)
-    .toUpperCase();
+/** legacy avatar shows the role: PJ (partner/owner) · MG · ST */
+const initials = (role: string) => (role === 'owner' ? 'PJ' : role === 'manager' ? 'MG' : 'ST');
 
 /** Legacy "ทดลองบทบาท" picker. Demo: switches sample member. Cloud: shows the real role. */
 function RolePicker() {
@@ -261,7 +266,7 @@ function RolePicker() {
           ))}
         </select>
         <span className="avatar" id="avatar">
-          {initials(me.displayName)}
+          {initials(me.role)}
         </span>
       </label>
     );
@@ -270,7 +275,7 @@ function RolePicker() {
     <span className="role-picker">
       {roleName(me.role)}
       <span className="avatar" id="avatar">
-        {initials(me.displayName)}
+        {initials(me.role)}
       </span>
     </span>
   );

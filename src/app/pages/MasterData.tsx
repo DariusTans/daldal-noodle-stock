@@ -34,7 +34,12 @@ export function IngredientsPage() {
         sub="จัดรายการให้พร้อม ก่อนเริ่มนับสต็อกรอบแรก"
         actions={
           editable && (
-            <button className="primary" id="add-ingredient" type="button" onClick={() => setEditing('new')}>
+            <button
+              className="primary"
+              id="add-ingredient"
+              type="button"
+              onClick={() => setEditing('new')}
+            >
               <span>＋</span> เพิ่มวัตถุดิบ
             </button>
           )
@@ -43,7 +48,12 @@ export function IngredientsPage() {
       <Stats>
         <Stat label="วัตถุดิบทั้งหมด" value={state.ingredients.length} unit="รายการ" symbol="▤" />
         <Stat label="พร้อมใช้งาน" value={active} unit="รายการ" symbol="✓" />
-        <Stat label="พักใช้งาน" value={state.ingredients.length - active} unit="รายการ" symbol="Ⅱ" />
+        <Stat
+          label="พักใช้งาน"
+          value={state.ingredients.length - active}
+          unit="รายการ"
+          symbol="Ⅱ"
+        />
       </Stats>
       <section className="panel">
         <div className="panel-heading">
@@ -61,13 +71,23 @@ export function IngredientsPage() {
               onChange={(e) => setQ(e.target.value)}
             />
           </label>
-          <select id="category-filter" aria-label="กรองหมวดหมู่" value={category} onChange={(e) => setCategory(e.target.value)}>
+          <select
+            id="category-filter"
+            aria-label="กรองหมวดหมู่"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
             <option value="">ทุกหมวดหมู่</option>
             {ingredientCategories.map((c) => (
               <option key={c}>{c}</option>
             ))}
           </select>
-          <select id="status-filter" aria-label="กรองสถานะ" value={status} onChange={(e) => setStatus(e.target.value)}>
+          <select
+            id="status-filter"
+            aria-label="กรองสถานะ"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
             <option value="all">ทุกสถานะ</option>
             <option value="active">ใช้งาน</option>
             <option value="inactive">พักใช้งาน</option>
@@ -103,7 +123,12 @@ export function IngredientsPage() {
                   <td>
                     {editable && (
                       <div className="row-actions">
-                        <button className="mini" type="button" aria-label={'แก้ไข ' + i.name} onClick={() => setEditing(i)}>
+                        <button
+                          className="mini"
+                          type="button"
+                          aria-label={'แก้ไข ' + i.name}
+                          onClick={() => setEditing(i)}
+                        >
                           แก้ไข
                         </button>
                         <ActionButton
@@ -147,10 +172,16 @@ export function IngredientsPage() {
       <div className="section-note">
         <span className="note-icon">i</span>
         <span>
-          ทะเบียนนี้ใช้ตั้งต้นรอบนับ เปิดเมนู “นับและยืนยันสต็อก” เพื่อกรอกยอด และดู “ยอดนับล่าสุด” หลังยืนยัน
+          ทะเบียนนี้ใช้ตั้งต้นรอบนับ เปิดเมนู “นับและยืนยันสต็อก” เพื่อกรอกยอด และดู “ยอดนับล่าสุด”
+          หลังยืนยัน
         </span>
       </div>
-      {editing && <IngredientForm item={editing === 'new' ? undefined : editing} onClose={() => setEditing(null)} />}
+      {editing && (
+        <IngredientForm
+          item={editing === 'new' ? undefined : editing}
+          onClose={() => setEditing(null)}
+        />
+      )}
       {detail && <IngredientDetail item={detail} onClose={() => setDetail(null)} />}
     </>
   );
@@ -186,9 +217,27 @@ function IngredientForm({ item, onClose }: { item?: Ingredient; onClose: () => v
       }
     >
       <FieldGrid>
-        <Input label="รหัสวัตถุดิบ *" name="code" defaultValue={item?.code ?? nextCode(state.ingredients)} required maxLength={30} />
-        <Input label="ชื่อวัตถุดิบ *" name="name" defaultValue={item?.name} required maxLength={100} />
-        <Select label="หมวดหมู่ *" name="category" required defaultValue={item?.category} options={ingredientCategories.map((c) => [c, c])} />
+        <Input
+          label="รหัสวัตถุดิบ *"
+          name="code"
+          defaultValue={item?.code ?? nextCode(state.ingredients)}
+          required
+          maxLength={30}
+        />
+        <Input
+          label="ชื่อวัตถุดิบ *"
+          name="name"
+          defaultValue={item?.name}
+          required
+          maxLength={100}
+        />
+        <Select
+          label="หมวดหมู่ *"
+          name="category"
+          required
+          defaultValue={item?.category}
+          options={ingredientCategories.map((c) => [c, c])}
+        />
         <Select
           label="หน่วยนับ *"
           name="unitId"
@@ -196,7 +245,13 @@ function IngredientForm({ item, onClose }: { item?: Ingredient; onClose: () => v
           defaultValue={item?.unitId}
           options={state.units.map((u) => [u.id, `${u.name} (${u.symbol})`])}
         />
-        <Input label="สถานที่เก็บ" name="location" defaultValue={item?.location} maxLength={100} wide />
+        <Input
+          label="สถานที่เก็บ"
+          name="location"
+          defaultValue={item?.location}
+          maxLength={100}
+          wide
+        />
         <Textarea label="หมายเหตุ" name="note" defaultValue={item?.note} maxLength={500} />
       </FieldGrid>
     </ActionDialog>
@@ -262,7 +317,12 @@ export function UnitsPage() {
         sub="กำหนดชื่อและหน่วยย่อให้ใช้ตรงกันทั้งร้าน"
         actions={
           can('unit') && (
-            <button className="primary" id="add-unit" type="button" onClick={() => setEditing('new')}>
+            <button
+              className="primary"
+              id="add-unit"
+              type="button"
+              onClick={() => setEditing('new')}
+            >
               ＋ เพิ่มหน่วยนับ
             </button>
           )
@@ -291,7 +351,12 @@ export function UnitsPage() {
                   <td>{used(u.id)} รายการ</td>
                   <td>
                     {can('unit') && (
-                      <button className="mini" type="button" aria-label={'แก้ไขหน่วย ' + u.name} onClick={() => setEditing(u)}>
+                      <button
+                        className="mini"
+                        type="button"
+                        aria-label={'แก้ไขหน่วย ' + u.name}
+                        onClick={() => setEditing(u)}
+                      >
                         แก้ไข
                       </button>
                     )}
@@ -310,7 +375,9 @@ export function UnitsPage() {
           หน่วยที่มีวัตถุดิบอ้างอิงอยู่จะเปลี่ยนประเภทไม่ได้
         </span>
       </div>
-      {editing && <UnitForm item={editing === 'new' ? undefined : editing} onClose={() => setEditing(null)} />}
+      {editing && (
+        <UnitForm item={editing === 'new' ? undefined : editing} onClose={() => setEditing(null)} />
+      )}
     </>
   );
 }
@@ -323,12 +390,22 @@ function UnitForm({ item, onClose }: { item?: Unit; onClose: () => void }) {
       eyebrow={MASTER}
       title={item ? 'แก้ไขหน่วยนับ' : 'เพิ่มหน่วยนับ'}
       submit={(f, run) =>
-        run('saveUnit', { id: item?.id, name: str(f, 'name'), symbol: str(f, 'symbol'), type: str(f, 'type') }, 'บันทึกหน่วยแล้ว')
+        run(
+          'saveUnit',
+          { id: item?.id, name: str(f, 'name'), symbol: str(f, 'symbol'), type: str(f, 'type') },
+          'บันทึกหน่วยแล้ว',
+        )
       }
     >
       <FieldGrid>
         <Input label="ชื่อหน่วย *" name="name" defaultValue={item?.name} required maxLength={40} />
-        <Input label="หน่วยย่อ *" name="symbol" defaultValue={item?.symbol} required maxLength={15} />
+        <Input
+          label="หน่วยย่อ *"
+          name="symbol"
+          defaultValue={item?.symbol}
+          required
+          maxLength={15}
+        />
         <Select
           label="ประเภท *"
           name="type"
