@@ -26,10 +26,16 @@ npm run legacy:test  # unit tests เดิม
 
 ## สถานะตามแผน
 - [x] Phase 0: git baseline, ย้ายของเดิมไป legacy/, scaffold, oracle test
-- [ ] Phase 1: domain layer TS + parity test
+- [x] Phase 1: domain layer TS + parity test (`src/domain`, 37 operations, เทียบ legacy ด้วย demo seed + fuzz 3,600 ขั้น + migration v1–6)
 - [ ] Phase 2: Supabase schema + RLS
 - [ ] Phase 3: API (/api/state, /api/action, evidence, import)
 - [ ] Phase 4: React UI + Auth + demo mode
 - [ ] Phase 5: Vercel deploy + CI
+
+## Domain (`src/domain`)
+- `import * as D from '@/domain'` — ทุกฟังก์ชันเป็น pure `(state, ...args) → state ใหม่` และ throw `DomainError` (ข้อความไทย)
+- รูปแบบ state = JSON schemaVersion 6 เดียวกับ prototype → import backup เดิมได้ด้วย `D.migrate()`
+- `D.withRuntime({ now, random }, fn)` ตรึงเวลาและ id (server/test)
+- `tests/domain/parity.test.ts` เทียบกับ legacy ทุก operation, `tests/domain/rules.test.ts` กฎ 11 ข้อแบบอ่านง่าย
 
 กฎธุรกิจที่ห้ามเปลี่ยนดูได้ที่ `legacy/docs/DEV_GUIDE.md`
