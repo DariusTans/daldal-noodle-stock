@@ -41,6 +41,8 @@ npm run legacy:test  # unit tests เดิม
 - `tests/domain/parity.test.ts` เทียบกับ legacy ทุก operation, `tests/domain/rules.test.ts` กฎ 11 ข้อแบบอ่านง่าย
 
 ## Frontend (`src/app`)
+- **หน้าตา = prototype เดิมทุกจุด**: ใช้ CSS ของ `legacy/assets/*.css` ตรงๆ (`src/app/legacy-css`, ห้ามแก้) และ markup/class เดียวกับ legacy UI; สิ่งที่เพิ่มใหม่ (หน้า login, ตารางสมาชิก) ใส่ใน `src/app/app.css`
+- ต่างจากเดิมโดยตั้งใจ: ไม่มีช่องพิมพ์ "ชื่อผู้ทำรายการ / ผู้ตรวจ" เพราะ server ใช้ชื่อสมาชิกที่ login, ผู้อนุมัติ/ผู้ตรวจบิลเลือกจากสมาชิก, ไฟล์บิลอัปโหลดขึ้น storage (≤ 5 MB)
 - `npm run dev` → http://localhost:5173 · ถ้าไม่ได้ตั้ง `VITE_SUPABASE_*` แอปจะเปิด **โหมดทดลอง** อัตโนมัติ
 - **โหมดทดลอง**: API ตัวเดียวกับ server (`createApp`) รันในแท็บนี้บน store ในหน่วยความจำที่บันทึกลง localStorage
   มีสมาชิกตัวอย่าง 3 คน สลับดูมุมมองเจ้าของ / ผู้จัดการ / พนักงานได้จากแถบด้านบน · เปิดหลายแท็บแล้วชนกันจะได้ 409 เหมือนของจริง

@@ -5,7 +5,7 @@ test('every page renders without errors in demo mode', async ({ page }) => {
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await page.goto('/');
-  await expect(page.getByText('โหมดทดลอง').first()).toBeVisible();
+  await expect(page.locator('main[data-section]')).toBeVisible();
   await page.screenshot({ path: 'test-output/e2e/home.png', fullPage: true });
   const url = new URL(page.url());
   const base = url.pathname.replace(/\/home$/, '');
@@ -24,7 +24,7 @@ test('every page renders without errors in demo mode', async ({ page }) => {
     'members',
   ]) {
     await page.goto(base + '/' + p);
-    await expect(page.locator('main h1')).toBeVisible();
+    await expect(page.locator('main h1').first()).toBeVisible();
     await page.screenshot({ path: `test-output/e2e/${p}.png`, fullPage: true });
   }
   expect(errors).toEqual([]);

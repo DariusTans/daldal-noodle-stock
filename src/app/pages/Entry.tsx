@@ -9,11 +9,14 @@ import { Button, Card, FormError, Input, Select } from '../ui';
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="mx-auto flex min-h-svh max-w-md flex-col justify-center gap-5 p-5">
+    <main className="auth-shell">
       <div>
-        <p className="text-sm font-semibold tracking-widest text-brand">DALDAL ●</p>
-        <h1 className="text-3xl font-bold text-stone-900">ระบบจัดการร้าน</h1>
-        <p className="text-stone-600">สต็อก · จัดซื้อ · ตรวจรับ · ค่าใช้จ่าย</p>
+        <span className="brand-name">
+          DALDAL<span className="brand-dot">●</span>
+        </span>
+        <span className="brand-caption">NOODLE HOUSE / OPERATIONS</span>
+        <h1>ระบบจัดการร้าน</h1>
+        <p className="subtitle">สต็อก · จัดซื้อ · ตรวจรับ · ค่าใช้จ่าย</p>
       </div>
       {children}
     </main>
@@ -21,12 +24,7 @@ function Shell({ children }: { children: React.ReactNode }) {
 }
 
 export function Loading({ label = 'กำลังโหลด…' }: { label?: string }) {
-  return (
-    <div className="flex min-h-[40svh] items-center justify-center gap-2 text-stone-500">
-      <span className="size-4 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-      {label}
-    </div>
-  );
+  return <div className="empty">{label}</div>;
 }
 
 /** Decides where the user goes: login, create a shop, the only shop, or a shop picker. */
@@ -48,20 +46,17 @@ export function Gate() {
   return (
     <Shell>
       <Card title="เลือกร้าน">
-        <ul className="flex flex-col gap-2">
+        <ul className="shop-list">
           {shops.map((s) => (
             <li key={s.shopId}>
-              <Link
-                to={`/s/${s.shopId}/home`}
-                className="flex justify-between rounded-lg px-3 py-2 ring-1 ring-stone-200 hover:bg-stone-50"
-              >
-                <span className="font-medium">{s.shopName}</span>
-                <span className="text-sm text-stone-500">{s.displayName}</span>
+              <Link to={`/s/${s.shopId}/home`} className="shop-link">
+                <b>{s.shopName}</b>
+                <small>{s.displayName}</small>
               </Link>
             </li>
           ))}
         </ul>
-        <Link to="/new-shop" className="mt-3 inline-block text-sm text-brand underline">
+        <Link to="/new-shop" className="text-button">
           + สร้างร้านใหม่
         </Link>
       </Card>
@@ -102,11 +97,9 @@ export function LoginPage() {
       {cloudConfigured ? (
         <Card title="เข้าสู่ระบบ">
           {sent ? (
-            <p className="text-stone-700">
-              ส่งลิงก์เข้าสู่ระบบไปที่อีเมลแล้ว เปิดลิงก์จากเครื่องนี้เพื่อเข้าใช้งาน
-            </p>
+            <p>ส่งลิงก์เข้าสู่ระบบไปที่อีเมลแล้ว เปิดลิงก์จากเครื่องนี้เพื่อเข้าใช้งาน</p>
           ) : (
-            <form onSubmit={submit} className="flex flex-col gap-3">
+            <form onSubmit={submit} className="auth-form">
               <Input label="อีเมล" name="email" type="email" required autoComplete="email" />
               <Input
                 label="รหัสผ่าน"
@@ -124,14 +117,14 @@ export function LoginPage() {
         </Card>
       ) : (
         <Card>
-          <p className="text-sm text-stone-600">
+          <p className="muted">
             ยังไม่ได้เชื่อมต่อ Supabase (ตั้งค่า VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY)
             ใช้งานได้เฉพาะโหมดทดลอง
           </p>
         </Card>
       )}
       <Card title="ทดลองใช้งาน">
-        <p className="mb-3 text-sm text-stone-600">
+        <p className="muted">
           ข้อมูลตัวอย่างเก็บในเบราว์เซอร์นี้เท่านั้น สลับดูมุมมองเจ้าของ / ผู้จัดการ / พนักงานได้
         </p>
         <Button
@@ -177,7 +170,7 @@ export function NewShopPage() {
   return (
     <Shell>
       <Card title="สร้างร้านใหม่">
-        <form onSubmit={submit} className="flex flex-col gap-3">
+        <form onSubmit={submit} className="auth-form">
           <Input label="ชื่อร้าน / สาขา" name="name" required maxLength={100} />
           <Input
             label="ชื่อของคุณ (แสดงในประวัติและการอนุมัติ)"

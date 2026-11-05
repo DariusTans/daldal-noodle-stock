@@ -1,1 +1,15 @@
 /* Additions for screens that did not exist in the prototype (login, shop picker). */
+
+.auth-shell{max-width:460px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:30px 18px}
+.auth-shell>div:first-child{background:#242925;border-radius:16px;padding:26px 24px;color:#f8f4e6}
+.auth-shell .brand-caption{color:#c6c9bd}
+.auth-shell h1{color:#fff;margin:18px 0 4px}
+.auth-shell .subtitle{color:#c6c9bd;margin:0}
+.auth-shell .panel{padding:22px}
+.auth-shell .panel-heading{padding:0 0 14px}
+.auth-form{display:grid;gap:14px}
+.auth-form .primary{min-height:44px}
+.shop-list{list-style:none;padding:0;margin:0 0 12px;display:grid;gap:8px}
+.shop-link{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border:1px solid #e3e7db;border-radius:10px;text-decoration:none}
+.shop-link:hover{background:#f7f7f2}
+.shop-link small{color:#7c826e}
