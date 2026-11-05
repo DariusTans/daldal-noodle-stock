@@ -18,7 +18,8 @@ export function ActionDialog({
   open,
   onClose,
   title,
-  submitLabel = 'บันทึก',
+  submitLabel = 'บันทึกข้อมูล',
+  eyebrow,
   submit,
   children,
   wide,
@@ -28,6 +29,8 @@ export function ActionDialog({
   onClose: () => void;
   title: string;
   submitLabel?: string;
+  /** legacy dialog eyebrow, e.g. "DALDAL / MASTER DATA" */
+  eyebrow?: string;
   submit: (f: FormData, run: Run) => Promise<boolean>;
   children: ReactNode;
   wide?: boolean;
@@ -50,12 +53,13 @@ export function ActionDialog({
         onClose();
       }}
       title={title}
+      eyebrow={eyebrow}
       wide={wide}
     >
-      <form onSubmit={onSubmit} className="flex flex-col gap-3">
+      <form onSubmit={onSubmit}>
         {children}
         <FormError error={error} />
-        <div className="mt-1 flex justify-end gap-2">
+        <div className="dialog-actions">
           <Button onClick={onClose}>ยกเลิก</Button>
           <Button type="submit" variant={danger ? 'danger' : 'primary'} busy={pending}>
             {submitLabel}

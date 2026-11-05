@@ -183,7 +183,7 @@ function Frame({ page }: { page: string }) {
           <span className="brand-caption">NOODLE HOUSE / OPERATIONS</span>
         </a>
         <div className="shop">
-          <span className="shop-icon">{me.shopName.trim().charAt(0) || 'D'}</span>
+          <span className="shop-icon">{/[A-Za-z]/.exec(me.shopName)?.[0]?.toUpperCase() ?? 'D'}</span>
           <div>
             {me.shopName}
             <small>{me.displayName}</small>

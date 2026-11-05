@@ -239,12 +239,15 @@ export function Dialog({
   onClose,
   title,
   eyebrow = 'DALDAL',
+  head,
   children,
 }: {
   open: boolean;
   onClose: () => void;
   title: string;
   eyebrow?: string;
+  /** extra content under the title (legacy puts the status chip here) */
+  head?: ReactNode;
   children: ReactNode;
   wide?: boolean;
 }) {
@@ -263,6 +266,7 @@ export function Dialog({
             <div>
               <span className="eyebrow">{eyebrow}</span>
               <h2>{title}</h2>
+              {head}
             </div>
             <button className="icon-btn" type="button" aria-label="ปิด" onClick={onClose}>
               ×
