@@ -1,7 +1,9 @@
-/** Small UI kit (Tailwind). Mobile-first, keyboard accessible, Thai typography. */
+/**
+ * UI primitives that render the prototype's markup and classes (src/app/legacy-css, copied
+ * verbatim from legacy/assets). Keep class names identical to legacy — the CSS is the CI.
+ */
 import {
   useEffect,
-  useId,
   useRef,
   type ButtonHTMLAttributes,
   type InputHTMLAttributes,
@@ -12,15 +14,8 @@ import {
 
 export const cx = (...xs: Array<string | false | null | undefined>) => xs.filter(Boolean).join(' ');
 
-// ── Button ──
+// ── Button: legacy uses .primary / .secondary / .text-button / .mini ──
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
-const variants: Record<Variant, string> = {
-  primary: 'bg-brand text-white hover:bg-orange-800 disabled:bg-orange-300',
-  secondary:
-    'bg-white text-stone-800 ring-1 ring-stone-300 hover:bg-stone-50 disabled:text-stone-400',
-  ghost: 'text-stone-700 hover:bg-stone-100 disabled:text-stone-400',
-  danger: 'bg-white text-red-700 ring-1 ring-red-300 hover:bg-red-50 disabled:text-red-300',
-};
 export function Button({
   variant = 'secondary',
   size = 'md',
@@ -33,27 +28,28 @@ export function Button({
   size?: 'sm' | 'md';
   busy?: boolean;
 }) {
+  const cls =
+    size === 'sm'
+      ? 'mini'
+      : variant === 'primary'
+        ? 'primary'
+        : variant === 'ghost'
+          ? 'text-button'
+          : 'secondary';
   return (
     <button
       type="button"
       {...rest}
       disabled={rest.disabled || busy}
-      className={cx(
-        'inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed',
-        size === 'sm' ? 'px-2.5 py-1 text-sm' : 'px-4 py-2',
-        variants[variant],
-        className,
-      )}
+      aria-busy={busy || undefined}
+      className={cx(cls, className)}
     >
-      {busy && (
-        <span className="size-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-      )}
       {children}
     </button>
   );
 }
 
-// ── Layout ──
+// ── Page heading: .page-head > div > .eyebrow + h1 + .subtitle ──
 export function PageHeader({
   eyebrow,
   title,
@@ -66,19 +62,18 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <header className="mb-5 flex flex-wrap items-end justify-between gap-3">
+    <div className="page-head">
       <div>
-        {eyebrow && (
-          <p className="text-xs font-semibold tracking-widest text-brand uppercase">{eyebrow}</p>
-        )}
-        <h1 className="text-2xl font-bold text-stone-900">{title}</h1>
-        {sub && <p className="mt-1 max-w-2xl text-sm text-stone-600">{sub}</p>}
+        {eyebrow && <span className="eyebrow">{eyebrow}</span>}
+        <h1>{title}</h1>
+        {sub && <p className="subtitle">{sub}</p>}
       </div>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
-    </header>
+      {actions}
+    </div>
   );
 }
 
+// ── Panel: section.panel > .panel-heading > h3 ──
 export function Card({
   title,
   actions,
@@ -91,11 +86,11 @@ export function Card({
   className?: string;
 }) {
   return (
-    <section className={cx('rounded-xl bg-white p-4 shadow-sm ring-1 ring-stone-200', className)}>
+    <section className={cx('panel', className)}>
       {(title || actions) && (
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          {title && <h2 className="font-semibold text-stone-900">{title}</h2>}
-          {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+        <div className="panel-heading">
+          {title && <h3>{title}</h3>}
+          {actions}
         </div>
       )}
       {children}
@@ -103,120 +98,121 @@ export function Card({
   );
 }
 
-export function Empty({ children }: { children: ReactNode }) {
+export function Empty({ title, children }: { title?: string; children?: ReactNode }) {
   return (
-    <p className="rounded-lg border border-dashed border-stone-300 p-6 text-center text-sm text-stone-500">
+    <div className="empty">
+      {title && <strong>{title}</strong>}
       {children}
-    </p>
+    </div>
   );
 }
 
+// ── Stats: .stats > .stat > div > small + strong(+.stat-unit) + .stat-symbol ──
+export const Stats = ({ children }: { children: ReactNode }) => (
+  <div className="stats">{children}</div>
+);
 export function Stat({
   label,
   value,
+  unit,
+  symbol,
   hint,
 }: {
   label: string;
   value: ReactNode;
+  unit?: string;
+  symbol?: string;
   hint?: ReactNode;
 }) {
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-stone-200">
-      <p className="text-sm text-stone-500">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-stone-900">{value}</p>
-      {hint && <p className="mt-1 text-xs text-stone-500">{hint}</p>}
+    <div className="stat">
+      <div>
+        <small>{label}</small>
+        <strong>
+          {value}
+          {unit && <span className="stat-unit">{unit}</span>}
+        </strong>
+        {hint && <small>{hint}</small>}
+      </div>
+      {symbol && <span className="stat-symbol">{symbol}</span>}
     </div>
   );
 }
 
-// ── Badge ──
-type Tone = 'neutral' | 'info' | 'success' | 'warning' | 'danger';
-const tones: Record<Tone, string> = {
-  neutral: 'bg-stone-100 text-stone-700',
-  info: 'bg-sky-100 text-sky-800',
-  success: 'bg-emerald-100 text-emerald-800',
-  warning: 'bg-amber-100 text-amber-900',
-  danger: 'bg-red-100 text-red-800',
+// ── Chip ──
+type Tone = 'ok' | 'review' | 'draft' | 'off' | 'category';
+/** transitional aliases used by screens not yet rewritten to legacy markup */
+type ToneAlias = 'success' | 'warning' | 'info' | 'neutral' | 'danger';
+const ALIAS: Record<ToneAlias, Tone> = {
+  success: 'ok',
+  warning: 'review',
+  info: 'draft',
+  neutral: 'off',
+  danger: 'review',
 };
-export function Badge({ tone = 'neutral', children }: { tone?: Tone; children: ReactNode }) {
-  return (
-    <span
-      className={cx(
-        'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap',
-        tones[tone],
-      )}
-    >
-      {children}
-    </span>
-  );
+export function Badge({ tone = 'ok', children }: { tone?: Tone | ToneAlias; children: ReactNode }) {
+  const t = (ALIAS as Record<string, Tone>)[tone] ?? (tone as Tone);
+  return <span className={cx('chip', t !== 'ok' && t)}>{children}</span>;
 }
 
-// ── Forms ──
-const control =
-  'w-full rounded-lg border-0 bg-white px-3 py-2 text-stone-900 ring-1 ring-stone-300 placeholder:text-stone-400 focus:ring-2 focus:ring-brand focus:outline-none disabled:bg-stone-100';
-
-export function Field({
-  label,
-  hint,
-  children,
-}: {
-  label: string;
-  hint?: ReactNode;
-  children: (id: string) => ReactNode;
-}) {
-  const id = useId();
-  return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-medium text-stone-700">
-        {label}
-      </label>
-      {children(id)}
-      {hint && <p className="text-xs text-stone-500">{hint}</p>}
-    </div>
-  );
-}
-
+// ── Form fields: label.field{.wide} > text + control ──
 export const Input = ({
   label,
   hint,
+  wide,
   ...p
-}: InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: ReactNode }) => (
-  <Field label={label} hint={hint}>
-    {(id) => <input id={id} {...p} className={cx(control, p.className)} />}
-  </Field>
+}: InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: ReactNode; wide?: boolean }) => (
+  <label className={cx('field', wide && 'wide')}>
+    {label}
+    <input {...p} />
+    {hint && <span>{hint}</span>}
+  </label>
 );
 
 export const Textarea = ({
   label,
   hint,
+  wide = true,
   ...p
-}: TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string; hint?: ReactNode }) => (
-  <Field label={label} hint={hint}>
-    {(id) => <textarea id={id} rows={2} {...p} className={cx(control, p.className)} />}
-  </Field>
+}: TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  label: string;
+  hint?: ReactNode;
+  wide?: boolean;
+}) => (
+  <label className={cx('field', wide && 'wide')}>
+    {label}
+    <textarea {...p} />
+    {hint && <span>{hint}</span>}
+  </label>
 );
 
 export const Select = ({
   label,
   hint,
   options,
+  wide,
   ...p
 }: SelectHTMLAttributes<HTMLSelectElement> & {
   label: string;
   hint?: ReactNode;
   options: Array<[string, string]>;
+  wide?: boolean;
 }) => (
-  <Field label={label} hint={hint}>
-    {(id) => (
-      <select id={id} {...p} className={cx(control, p.className)}>
-        {options.map(([v, l]) => (
-          <option key={v} value={v}>
-            {l}
-          </option>
-        ))}
-      </select>
-    )}
-  </Field>
+  <label className={cx('field', wide && 'wide')}>
+    {label}
+    <select {...p}>
+      {options.map(([v, l]) => (
+        <option key={v} value={v}>
+          {l}
+        </option>
+      ))}
+    </select>
+    {hint && <span>{hint}</span>}
+  </label>
+);
+
+export const FieldGrid = ({ children }: { children: ReactNode }) => (
+  <div className="field-grid">{children}</div>
 );
 
 export function Check({
@@ -224,31 +220,31 @@ export function Check({
   ...p
 }: InputHTMLAttributes<HTMLInputElement> & { label: ReactNode }) {
   return (
-    <label className="flex items-start gap-2 text-sm text-stone-700">
-      <input type="checkbox" {...p} className="mt-0.5 size-4 rounded accent-brand" />
+    <label className="stock-checkbox">
+      <input type="checkbox" {...p} />
       <span>{label}</span>
     </label>
   );
 }
 
-export const FormError = ({ error }: { error: string | null }) =>
-  error ? (
-    <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">
-      {error}
-    </p>
-  ) : null;
+export const FormError = ({ error }: { error: string | null }) => (
+  <p role="alert" className="form-error">
+    {error ?? ''}
+  </p>
+);
 
-// ── Dialog (native <dialog>, focus-trapped by the browser) ──
+// ── Dialog: native <dialog> > .dialog-head(.eyebrow + h2, .icon-btn ×) ──
 export function Dialog({
   open,
   onClose,
   title,
+  eyebrow = 'DALDAL',
   children,
-  wide,
 }: {
   open: boolean;
   onClose: () => void;
   title: string;
+  eyebrow?: string;
   children: ReactNode;
   wide?: boolean;
 }) {
@@ -260,68 +256,54 @@ export function Dialog({
     if (!open && d.open) d.close();
   }, [open]);
   return (
-    <dialog
-      ref={ref}
-      onClose={onClose}
-      onCancel={onClose}
-      className={cx(
-        'm-auto w-[calc(100%-1.5rem)] rounded-2xl p-0 shadow-xl backdrop:bg-stone-900/40',
-        wide ? 'max-w-3xl' : 'max-w-lg',
-      )}
-    >
+    <dialog ref={ref} onClose={onClose} onCancel={onClose}>
       {open && (
-        <div className="max-h-[85svh] overflow-y-auto p-5">
-          <div className="mb-4 flex items-start justify-between gap-4">
-            <h2 className="text-lg font-semibold text-stone-900">{title}</h2>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="ปิด"
-              className="rounded-lg px-2 text-xl text-stone-500 hover:bg-stone-100"
-            >
+        <>
+          <div className="dialog-head">
+            <div>
+              <span className="eyebrow">{eyebrow}</span>
+              <h2>{title}</h2>
+            </div>
+            <button className="icon-btn" type="button" aria-label="ปิด" onClick={onClose}>
               ×
             </button>
           </div>
           {children}
-        </div>
+        </>
       )}
     </dialog>
   );
 }
 
-// ── Table ──
+// ── Table: .table-wrap > table ──
 export function Table({
   head,
   children,
   empty,
+  label,
 }: {
   head: ReactNode[];
   children: ReactNode;
   empty?: string;
+  label?: string;
 }) {
   const hasRows = Array.isArray(children) ? children.flat().some(Boolean) : !!children;
   return (
-    <div className="-mx-4 overflow-x-auto px-4">
-      <table className="w-full min-w-[36rem] text-left text-sm">
-        <thead className="border-b border-stone-200 text-xs text-stone-500">
+    <div className="table-wrap">
+      <table aria-label={label}>
+        <thead>
           <tr>
             {head.map((h, i) => (
-              <th key={i} className="px-2 py-2 font-medium">
-                {h}
-              </th>
+              <th key={i}>{h}</th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-stone-100">{children}</tbody>
+        <tbody>{children}</tbody>
       </table>
-      {!hasRows && empty && (
-        <div className="py-4">
-          <Empty>{empty}</Empty>
-        </div>
-      )}
+      {!hasRows && empty && <Empty>{empty}</Empty>}
     </div>
   );
 }
 export const Td = ({ children, className }: { children?: ReactNode; className?: string }) => (
-  <td className={cx('px-2 py-2 align-top', className)}>{children}</td>
+  <td className={className}>{children}</td>
 );

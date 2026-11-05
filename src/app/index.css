@@ -1,10 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap');
-@import 'tailwindcss';
-
-@theme {
-  --font-sans: 'IBM Plex Sans Thai', ui-sans-serif, system-ui, sans-serif;
-  --color-brand: #c2410c;
-  --color-brand-foreground: #fff7ed;
-}
-
-html { font-family: var(--font-sans); }
+/*
+ * Visual identity = the v0.8.1 prototype, byte-for-byte (copied from legacy/assets/*.css,
+ * same order as legacy/index.html). Do not restyle here; add new rules in app.css.
+ */
+@import './legacy-css/styles.css';
+@import './legacy-css/counts.css';
+@import './legacy-css/stock.css';
+@import './legacy-css/buy.css';
+@import './legacy-css/receive.css';
+@import './legacy-css/expense.css';
+@import './legacy-css/report.css';
+@import './legacy-css/workflow.css';
+@import './app.css';

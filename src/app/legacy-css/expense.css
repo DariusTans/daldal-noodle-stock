@@ -1,0 +1,53 @@
+.expense-totals {
+  padding: 24px;
+  margin: 20px 0;
+  overflow-wrap: anywhere;
+}
+.expense-totals p {
+  line-height: 1.8;
+}
+.expense-list {
+  padding: 0 24px;
+}
+.expense-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #e1e4d8;
+  overflow-wrap: anywhere;
+}
+.expense-row:last-child {
+  border: 0;
+}
+.expense-row small {
+  display: block;
+  color: #647057;
+  margin-top: 8px;
+}
+#expense-dialog {
+  width: min(720px, calc(100% - 28px));
+}
+#expense-dialog p {
+  line-height: 1.8;
+}
+#expense-dialog input[type='file'] {
+  max-width: 100%;
+  font-size: 12px;
+}
+@media (max-width: 600px) {
+  .expense-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .expense-row button {
+    width: 100%;
+  }
+  .expense-totals {
+    padding: 18px;
+  }
+  .expense-list {
+    padding: 0 18px;
+  }
+}

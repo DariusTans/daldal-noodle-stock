@@ -1,112 +1,89 @@
-import { Link } from 'react-router';
-import { hasOpenCount, stockRows, workflowTasks } from '@/domain';
-import { fmtQty } from '../lib/format';
+/** งานวันนี้ — same markup as legacy workflow-ui.js home(). */
+import { useNavigate } from 'react-router';
+import { workflowTasks, type WorkflowTask } from '@/domain';
+import { roleName } from '../lib/format';
 import { useShop } from '../state';
-import { Badge, Card, Empty, PageHeader, Stat } from '../ui';
+import { PageHeader } from '../ui';
+
+export function useFlow() {
+  const { shopId } = useShop();
+  const navigate = useNavigate();
+  return (page: string, id = '', action = '') => {
+    const q = new URLSearchParams();
+    if (id) q.set('id', id);
+    if (action) q.set('action', action);
+    navigate(`/s/${shopId}/${page}${q.size ? '?' + q : ''}`);
+    window.scrollTo(0, 0);
+  };
+}
 
 export function HomePage() {
-  const { state, me, shopId } = useShop();
+  const { state, me } = useShop();
+  const flow = useFlow();
   const tasks = workflowTasks(state, me.role);
-  const rows = stockRows(state).filter((r) => r.active);
-  const low = rows.filter((r) => r.low);
-  const mine = tasks.filter((t) => t.can);
-  const others = tasks.filter((t) => !t.can);
+  const actionable = tasks.filter((t) => t.can);
+  const waiting = tasks.filter((t) => !t.can);
+  const link = (page: string, label: string) => (
+    <button className="secondary" type="button" onClick={() => flow(page)}>
+      {label}
+    </button>
+  );
+  const card = (t: WorkflowTask) => (
+    <article key={t.key} className={`task-card ${t.can ? '' : 'waiting'}`}>
+      <span className={`chip ${t.can ? 'review' : 'off'}`}>{t.status}</span>
+      <h3>{t.title}</h3>
+      <p>{t.done}</p>
+      <small>ทำต่อโดย {t.who}</small>
+      {t.can ? (
+        <button className="primary" type="button" onClick={() => flow(t.page, t.id, t.action)}>
+          ทำต่อ →
+        </button>
+      ) : (
+        <span className="task-wait">รอบทบาทที่ระบุทำขั้นถัดไป</span>
+      )}
+    </article>
+  );
 
   return (
     <>
       <PageHeader
-        eyebrow="งานวันนี้"
-        title={`สวัสดี ${me.displayName}`}
-        sub="รายการค้างทั้งหมดคำนวณจากสถานะเอกสารจริง ทำต่อได้จากแต่ละรายการ"
+        eyebrow="YOUR WORKSPACE"
+        title="งานวันนี้"
+        sub="งานค้างทั้งหมดตามบทบาท ไม่ได้จำกัดเฉพาะรายการที่สร้างวันนี้"
       />
-      <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Stat label="งานที่คุณทำได้" value={mine.length} />
-        <Stat label="รอคนอื่น" value={others.length} />
-        <Stat
-          label="เข้าเกณฑ์เตือนซื้อ"
-          value={low.length}
-          hint={low
-            .map((r) => r.name)
-            .slice(0, 3)
-            .join(', ')}
-        />
-        <Stat
-          label="รอบนับ"
-          value={hasOpenCount(state) ? 'กำลังนับ' : 'ไม่มีค้าง'}
-          hint={hasOpenCount(state) ? 'เคลื่อนไหวและเสนอซื้อพักไว้ก่อน' : undefined}
-        />
+      <div className="today-intro">
+        <div>
+          <span className="eyebrow">{roleName(me.role)}</span>
+          <h2>วันนี้ เริ่มจากงานที่ทำต่อได้</h2>
+          <p>ข้อมูลร้านล่าสุด · ไม่มีการกำหนดความเร่งด่วนอัตโนมัติ</p>
+        </div>
+        <div className="today-count">
+          <strong>{actionable.length}</strong> งานที่ทำต่อได้
+        </div>
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <TaskList
-          title="ถึงคิวคุณ"
-          tasks={mine}
-          shopId={shopId}
-          empty="ไม่มีงานค้างสำหรับบทบาทนี้"
-        />
-        <TaskList
-          title="รอผู้อื่นดำเนินการ"
-          tasks={others}
-          shopId={shopId}
-          empty="ไม่มีงานรอผู้อื่น"
-          muted
-        />
+      <div className="quick-actions">
+        {link('counting', 'นับสต็อก')}
+        {link('receiving', 'รับสินค้า')}
+        {link('expenses', 'บันทึกค่าใช้จ่าย')}
+        {link('dashboard', 'ดูรายงาน')}
       </div>
-      <Card title="ยอดอ้างอิงล่าสุด" className="mt-4">
-        {rows.length ? (
-          <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            {rows.map((r) => (
-              <li key={r.id} className="rounded-lg px-3 py-2 ring-1 ring-stone-200">
-                <p className="text-sm text-stone-600">{r.name}</p>
-                <p className="font-semibold">{fmtQty(r.referenceQty, r.unit.symbol)}</p>
-                {r.low && <Badge tone="warning">ต่ำกว่าจุดเตือน</Badge>}
-              </li>
-            ))}
-          </ul>
+      <h2 className="section-title">ทำต่อได้ ({actionable.length})</h2>
+      <div className="task-grid">
+        {actionable.length ? (
+          actionable.map(card)
         ) : (
-          <Empty>ยังไม่มีวัตถุดิบที่ใช้งาน</Empty>
+          <section className="panel empty">
+            <strong>ไม่มีงานค้างสำหรับบทบาทนี้</strong>เริ่มจากนับสต็อก
+            หรือเปิดรายงานเพื่อตรวจข้อมูลปัจจุบัน
+          </section>
         )}
-      </Card>
-    </>
-  );
-}
-
-function TaskList({
-  title,
-  tasks,
-  shopId,
-  empty,
-  muted,
-}: {
-  title: string;
-  tasks: ReturnType<typeof workflowTasks>;
-  shopId: string;
-  empty: string;
-  muted?: boolean;
-}) {
-  return (
-    <Card title={`${title} (${tasks.length})`}>
-      {tasks.length ? (
-        <ul className="flex flex-col gap-2">
-          {tasks.map((t) => (
-            <li key={t.key}>
-              <Link
-                to={`/s/${shopId}/${t.page}`}
-                className={`block rounded-lg px-3 py-2 ring-1 ring-stone-200 hover:bg-stone-50 ${muted ? 'opacity-80' : ''}`}
-              >
-                <span className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="font-medium text-stone-900">{t.title}</span>
-                  <Badge tone={muted ? 'neutral' : 'warning'}>{t.status}</Badge>
-                </span>
-                <span className="mt-0.5 block text-xs text-stone-500">
-                  {t.done} · ผู้รับผิดชอบ: {t.who}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <Empty>{empty}</Empty>
+      </div>
+      {waiting.length > 0 && (
+        <>
+          <h2 className="section-title">รอส่งต่อ ({waiting.length})</h2>
+          <div className="task-grid">{waiting.map(card)}</div>
+        </>
       )}
-    </Card>
+    </>
   );
 }

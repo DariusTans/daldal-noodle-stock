@@ -1,0 +1,180 @@
+.report-scope {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff3c3;
+  padding: 18px 22px;
+  border-radius: 12px;
+  margin-bottom: 28px;
+}
+.report-heading p,
+.report-caption {
+  color: #647057;
+  line-height: 1.8;
+}
+.report-caption {
+  padding: 0 22px;
+  font-size: 13px;
+}
+.report-current h2,
+.report-period h2 {
+  font-size: 24px;
+}
+.report-period {
+  margin-top: 36px;
+  padding-top: 28px;
+  border-top: 2px solid #dce2d0;
+}
+.report-stats a {
+  color: inherit;
+  text-decoration: none;
+}
+.report-tasks {
+  padding: 0 22px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 28px;
+}
+.report-tasks article {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  border-top: 1px solid #e7eadf;
+  padding: 18px 0;
+  overflow-wrap: anywhere;
+}
+.report-tasks article div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+.report-tasks article small {
+  color: #647057;
+}
+.report-tasks button {
+  flex-shrink: 0;
+}
+.report-detail {
+  margin-top: 20px;
+  overflow: hidden;
+}
+.report-detail summary {
+  padding: 20px 22px;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1.8;
+}
+.report-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0 22px 18px;
+}
+.report-filters {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.report-filters label {
+  max-width: 210px;
+}
+.report-filters button {
+  margin-bottom: 1px;
+}
+.report-finance {
+  margin: 22px 0;
+}
+.report-money-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  padding: 10px 22px;
+}
+.report-money-card {
+  background: #f7f8f2;
+  border: 1px solid #e2e6d8;
+  border-radius: 12px;
+  padding: 20px;
+}
+.report-money-card > strong {
+  display: block;
+  font-size: 26px;
+  margin: 12px 0;
+}
+.report-money-card p {
+  line-height: 1.8;
+}
+.report-bars > div {
+  margin-top: 16px;
+}
+.report-bars span {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+}
+.report-track {
+  height: 9px;
+  background: #e4e8d8;
+  margin-top: 8px;
+  border-radius: 9px;
+  overflow: hidden;
+}
+.report-track i {
+  display: block;
+  height: 100%;
+  background: #e6b91f;
+  border-radius: 9px;
+}
+.report-purchase-totals {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 10px 22px 20px;
+  font-size: 22px;
+}
+.report-table {
+  min-width: 700px;
+}
+.report-table td {
+  overflow-wrap: anywhere;
+}
+.report-table small {
+  display: block;
+  margin-top: 5px;
+}
+.report-table button {
+  white-space: nowrap;
+}
+@media (max-width: 650px) {
+  .report-tasks {
+    grid-template-columns: 1fr;
+  }
+  .report-money-grid {
+    grid-template-columns: 1fr;
+    padding: 8px 16px;
+  }
+  .report-filters label {
+    max-width: none;
+    flex: 1 1 130px;
+  }
+  .report-filters button {
+    flex: 1 1 95px;
+  }
+  .report-stats {
+    grid-template-columns: 1fr !important;
+  }
+  .report-finance .panel-heading {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .report-scope {
+    font-size: 13px;
+  }
+  .report-tasks article {
+    font-size: 13px;
+  }
+}

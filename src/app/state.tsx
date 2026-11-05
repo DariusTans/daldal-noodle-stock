@@ -13,7 +13,6 @@ import { can, type Action, type ShopState } from '@/domain';
 import type { ActionPayload, ActionType } from '@/server/actions';
 import { ApiError, type MemberInfo, type Membership, type StateView } from './lib/api';
 import { cloudConfigured, loadBackend, type Backend } from './lib/backend';
-import { cx } from './ui';
 
 // ── Backend (cloud | demo) ───────────────────────────────────────────
 type Mode = 'cloud' | 'demo';
@@ -49,10 +48,9 @@ export function BackendProvider({ children }: { children: ReactNode }) {
   );
   if (!backend)
     return (
-      <div className="flex min-h-svh items-center justify-center gap-2 text-stone-500">
-        <span className="size-4 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-        กำลังเริ่มระบบ…
-      </div>
+      <main>
+        <div className="empty">กำลังเริ่มระบบ…</div>
+      </main>
     );
   return (
     <BackendContext.Provider value={{ backend, mode, setMode }}>{children}</BackendContext.Provider>
@@ -84,34 +82,25 @@ type ToastTone = 'success' | 'warning' | 'error';
 const ToastContext = createContext<(message: string, tone?: ToastTone) => void>(() => {});
 export const useToast = () => useContext(ToastContext);
 
+/** Legacy #toast: one message at a time, bottom centre. */
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<Array<{ id: number; message: string; tone: ToastTone }>>([]);
+  const [item, setItem] = useState<{ id: number; message: string; tone: ToastTone } | null>(null);
   const push = useCallback((message: string, tone: ToastTone = 'success') => {
     const id = Date.now() + Math.random();
-    setItems((xs) => [...xs, { id, message, tone }]);
-    setTimeout(() => setItems((xs) => xs.filter((x) => x.id !== id)), 4500);
+    setItem({ id, message, tone });
+    setTimeout(() => setItem((x) => (x?.id === id ? null : x)), 4500);
   }, []);
   return (
     <ToastContext.Provider value={push}>
       {children}
       <div
+        id="toast"
         role="status"
         aria-live="polite"
-        className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex flex-col items-center gap-2 px-4"
+        data-tone={item?.tone}
+        className={item ? 'show' : undefined}
       >
-        {items.map((t) => (
-          <div
-            key={t.id}
-            className={cx(
-              'pointer-events-auto max-w-md rounded-xl px-4 py-2.5 text-sm shadow-lg',
-              t.tone === 'success' && 'bg-stone-900 text-white',
-              t.tone === 'warning' && 'bg-amber-100 text-amber-950 ring-1 ring-amber-300',
-              t.tone === 'error' && 'bg-red-700 text-white',
-            )}
-          >
-            {t.message}
-          </div>
-        ))}
+        {item?.message}
       </div>
     </ToastContext.Provider>
   );

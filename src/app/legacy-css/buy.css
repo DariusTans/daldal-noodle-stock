@@ -1,0 +1,135 @@
+.buy-actions {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.buy-actions .secondary {
+  font-size: 12px;
+  padding: 7px 10px;
+  min-height: 35px;
+}
+.buy-policy {
+  background: #fff4c8;
+  border: 1px solid #eedb90;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+}
+.buy-policy p {
+  margin: 4px 0;
+}
+.buy-policy small {
+  color: #77725c;
+}
+.buy-source {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  align-items: center;
+  padding: 15px 0 25px;
+}
+.buy-source p,
+.buy-selection p {
+  margin: 4px 0;
+}
+.buy-source small {
+  color: #727d68;
+}
+.buy-selection {
+  padding: 18px 20px;
+  border-left: 3px solid #f5c532;
+  background: white;
+  margin: 18px 0;
+}
+.buy-table td {
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+.buy-table small {
+  display: block;
+  color: #77806c;
+  margin-top: 5px;
+}
+.quote-table td:first-child {
+  max-width: 290px;
+}
+.selected-offer {
+  background: #fff9e8 !important;
+}
+.buy-bottom {
+  padding: 12px 0;
+}
+.buy-audit {
+  padding: 0 20px;
+}
+.buy-audit article {
+  padding: 16px 0;
+  border-bottom: 1px solid #e7e9e1;
+}
+.buy-audit p {
+  margin: 3px 0;
+  font-size: 12px;
+  color: #707963;
+}
+.count-meta b {
+  font-size: 23px;
+}
+@media (max-width: 760px) {
+  .buy-table {
+    display: block;
+    min-width: 0;
+  }
+  .buy-table thead {
+    display: none;
+  }
+  .buy-table tbody {
+    display: block;
+  }
+  .buy-table tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+    padding: 17px;
+    border-bottom: 1px solid #e3e7dd;
+  }
+  .buy-table td {
+    display: block;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .buy-table td:first-child,
+  .buy-table td:last-child {
+    grid-column: 1/-1;
+    max-width: none;
+  }
+  .buy-source {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .buy-policy {
+    padding: 15px;
+  }
+  .buy-actions .secondary {
+    min-height: 42px;
+  }
+  .buy-bottom button {
+    flex: 1;
+  }
+  .count-meta b {
+    font-size: 17px;
+  }
+  .count-banner {
+    flex-wrap: wrap;
+  }
+  .buy-table td:nth-child(4) {
+    font-size: 15px;
+  }
+  .quote-table td:nth-child(4)::before {
+    content: 'รวม / ต่อหน่วย';
+    display: block;
+    font-size: 11px;
+    color: #727d68;
+  }
+}

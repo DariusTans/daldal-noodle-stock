@@ -78,7 +78,7 @@ export function demoBackend(): DemoBackend {
     });
     const shopId = await backend.deps.repo.bootstrap(
       owner.userId,
-      'ดัลดัล นู้ดเดิล (ตัวอย่าง)',
+      'ดัลดัล นู้ดเดิล',
       DEMO_PEOPLE[0].name,
       initial,
     );
