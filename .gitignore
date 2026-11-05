@@ -1,3 +1,9 @@
 node_modules/
+dist/
+.vercel/
+.env
+.env.*
+!.env.example
 test-output/
+coverage/
 .DS_Store
