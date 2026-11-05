@@ -41,6 +41,7 @@ export const PAGES: PageDef[] = [
   { key: 'home', label: 'งานวันนี้', section: 'งานวันนี้', icon: '◉', component: HomePage },
   {
     key: 'counting',
+    crumb: 'นับและยืนยันสต็อก',
     label: 'นับและยืนยัน',
     section: 'สต็อก',
     group: 'สต็อก',
@@ -49,6 +50,7 @@ export const PAGES: PageDef[] = [
   { key: 'latest', label: 'ยอดนับล่าสุด', section: 'สต็อก', group: 'สต็อก', component: LatestPage },
   {
     key: 'movements',
+    crumb: 'เคลื่อนไหวสต็อก',
     label: 'เคลื่อนไหว / ตรวจครบ',
     section: 'สต็อก',
     group: 'สต็อก',
@@ -56,6 +58,7 @@ export const PAGES: PageDef[] = [
   },
   {
     key: 'alerts',
+    crumb: 'เตือนซื้อและรายการเสนอ',
     label: 'เตือนซื้อ / เสนอซื้อ',
     section: 'สต็อก',
     group: 'สต็อก',
@@ -77,6 +80,7 @@ export const PAGES: PageDef[] = [
   },
   {
     key: 'expenses',
+    crumb: 'บิลและค่าใช้จ่าย',
     label: 'ค่าใช้จ่าย',
     section: 'ค่าใช้จ่าย',
     icon: '▧',
@@ -92,6 +96,7 @@ export const PAGES: PageDef[] = [
   },
   {
     key: 'settings',
+    crumb: 'ตั้งค่าร้าน',
     label: 'ตั้งค่าร้าน / เกณฑ์',
     section: 'ตั้งค่า',
     group: 'ตั้งค่า',
