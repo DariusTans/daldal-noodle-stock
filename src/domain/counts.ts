@@ -1,9 +1,9 @@
 /** Count rounds: draft → review → confirmed (legacy counts-core.js). Raw ops. */
-import { can } from './permissions';
-import { parseQuantity } from './quantity';
-import { nowIso, uid } from './runtime';
-import type { CountAudit, CountLine, CountRound, LatestCount, Role, ShopState } from './types';
-import { clone, fail, isText } from './util';
+import { can } from './permissions.js';
+import { parseQuantity } from './quantity.js';
+import { nowIso, uid } from './runtime.js';
+import type { CountAudit, CountLine, CountRound, LatestCount, Role, ShopState } from './types.js';
+import { clone, fail, isText } from './util.js';
 
 export interface CountUpdate {
   ingredientId: string;

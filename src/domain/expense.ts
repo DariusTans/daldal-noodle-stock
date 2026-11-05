@@ -3,10 +3,10 @@
  * draft/returned → pending → confirmed; only confirmed counts toward totals; never touches stock.
  * Raw ops — the public API validates input/output.
  */
-import { ATTACHMENT_MAX_BYTES, attachmentTypes } from './constants';
-import { parseExpenseAmount } from './money';
-import { can } from './permissions';
-import { nowDate, nowIso, uid } from './runtime';
+import { ATTACHMENT_MAX_BYTES, STORED_ATTACHMENT_MAX_BYTES, attachmentTypes } from './constants.js';
+import { parseExpenseAmount } from './money.js';
+import { can } from './permissions.js';
+import { nowDate, nowIso, uid } from './runtime.js';
 import type {
   Attachment,
   Currency,
@@ -17,8 +17,8 @@ import type {
   ReviewerRole,
   Role,
   ShopState,
-} from './types';
-import { clone, fail, isText, normLoose } from './util';
+} from './types.js';
+import { clone, fail, isText, normLoose } from './util.js';
 
 const req = (v: unknown, n = 500) => (isText(v, n) ? v.trim() : fail('กรอกข้อมูลที่จำเป็นให้ครบ'));
 const expenseId = () => uid('ex', 7);
@@ -75,6 +75,9 @@ export const isValidDate = (v: unknown): v is string =>
 export const bangkokToday = () =>
   nowDate().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
 
+const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+const STORED_PATH = new RegExp('^' + UUID + '/' + UUID + '$');
+
 const SIGNATURES: Record<Attachment['type'], string> = {
   'image/png': 'iVBORw0KGgo',
   'image/jpeg': '/9j/',
@@ -84,6 +87,7 @@ const SIGNATURES: Record<Attachment['type'], string> = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function assertValidAttachment(a: any): asserts a is Attachment {
+  if (a && typeof a.data !== 'string' && typeof a.path === 'string') return assertValidStored(a);
   if (
     !a ||
     !isText(a.name, 160) ||
@@ -104,6 +108,23 @@ export function assertValidAttachment(a: any): asserts a is Attachment {
   )
     fail('ข้อมูลไฟล์หลักฐานไม่ครบ');
   if (!m![2]!.startsWith(SIGNATURES[a.type as Attachment['type']])) fail('ชนิดไฟล์ไม่ตรงหลักฐาน');
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function assertValidStored(a: any): void {
+  if (
+    !isText(a.name, 160) ||
+    !(attachmentTypes as readonly string[]).includes(a.type) ||
+    !Number.isInteger(a.size) ||
+    a.size < 1 ||
+    a.size > STORED_ATTACHMENT_MAX_BYTES ||
+    !/^([a-f0-9]{64})$/.test(a.hash) ||
+    !isText(a.evidenceId, 100) ||
+    !STORED_PATH.test(a.path) ||
+    !a.path.endsWith('/' + a.evidenceId) ||
+    'data' in a
+  )
+    fail('หลักฐานไม่ถูกต้อง รองรับภาพ/PDF ไม่เกิน 5 MB ต่อไฟล์');
 }
 
 /** Other live expenses that look like the same bill (same file, vendor+reference, or vendor+date+amount). */

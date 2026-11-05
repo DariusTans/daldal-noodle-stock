@@ -2,11 +2,11 @@
  * Stock ledger, completeness checks, reorder policies and purchase requests
  * (legacy stock-core.js). Raw ops — the public API validates input/output.
  */
-import { movementKinds } from './constants';
-import { hasOpenCount, latestCounts } from './counts';
-import { can } from './permissions';
-import { parseQuantity } from './quantity';
-import { nowIso, uid } from './runtime';
+import { movementKinds } from './constants.js';
+import { hasOpenCount, latestCounts } from './counts.js';
+import { can } from './permissions.js';
+import { parseQuantity } from './quantity.js';
+import { nowIso, uid } from './runtime.js';
 import type {
   Movement,
   MovementKind,
@@ -16,8 +16,8 @@ import type {
   StockCheck,
   StockPolicy,
   StockRow,
-} from './types';
-import { clone, fail, isQuantity, required, round3 } from './util';
+} from './types.js';
+import { clone, fail, isQuantity, required, round3 } from './util.js';
 
 export interface MovementInput {
   ingredientId: string;

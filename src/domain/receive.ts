@@ -3,12 +3,12 @@
  * Only a confirmed receipt adds stock (once); void reverses it; history is never deleted.
  * Raw ops — the public API validates input/output.
  */
-import { receiptIssues } from './constants';
-import { hasOpenCount } from './counts';
-import { can } from './permissions';
-import { parseQuantity } from './quantity';
-import { nowIso, uid } from './runtime';
-import * as stock from './stock';
+import { receiptIssues } from './constants.js';
+import { hasOpenCount } from './counts.js';
+import { can } from './permissions.js';
+import { parseQuantity } from './quantity.js';
+import { nowIso, uid } from './runtime.js';
+import * as stock from './stock.js';
 import type {
   PurchaseOrder,
   Receipt,
@@ -16,8 +16,8 @@ import type {
   ReceivingSummary,
   Role,
   ShopState,
-} from './types';
-import { clone, fail, hasOwn, normRef, required, round3 } from './util';
+} from './types.js';
+import { clone, fail, hasOwn, normRef, required, round3 } from './util.js';
 
 const req = (v: unknown, n = 500, t = 'กรอกข้อมูลให้ครบ') => required(v, n, t);
 

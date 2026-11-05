@@ -28,7 +28,7 @@ npm run legacy:test  # unit tests เดิม
 - [x] Phase 0: git baseline, ย้ายของเดิมไป legacy/, scaffold, oracle test
 - [x] Phase 1: domain layer TS + parity test (`src/domain`, 37 operations, เทียบ legacy ด้วย demo seed + fuzz 3,600 ขั้น + migration v1–6)
 - [x] Phase 2: Supabase schema + RLS (`supabase/migrations`, ทดสอบใน PGlite: `npm run test:db`)
-- [ ] Phase 3: API (/api/state, /api/action, evidence, import)
+- [x] Phase 3: API บน Vercel Functions (`src/server`, `api/`) — ทดสอบ integration กับ migrations จริงใน PGlite
 - [ ] Phase 4: React UI + Auth + demo mode
 - [ ] Phase 5: Vercel deploy + CI
 
@@ -57,6 +57,30 @@ npm run db:start   # Supabase local (ต้องเปิด Docker Desktop)
 npm run db:reset   # ล้างและรัน migrations ใหม่
 npm run db:types   # gen types → src/db/database.generated.ts (เทียบกับ database.types.ts)
 npm run db:push    # ส่ง migrations ขึ้นโปรเจกต์ที่ link แล้ว (supabase link --project-ref ...)
+```
+
+## API (`api/` → `src/server`)
+ทุก request ส่ง `Authorization: Bearer <Supabase access token>`; ผลลัพธ์เป็น JSON (CSV สำหรับ report แบบมี `kind`)
+
+| Endpoint | ใช้ทำอะไร |
+|---|---|
+| `GET /api/me` | ร้านที่ผู้ใช้เป็นสมาชิก + บทบาท |
+| `POST /api/shops` | สร้างร้าน `{ name, displayName, template: blank\|starter\|demo }` ผู้สร้างเป็น owner |
+| `GET /api/state?shop=` | state + revision (staff ได้แบบตัดข้อมูลการเงิน `redacted: true`) |
+| `POST /api/action` | `{ shopId, type, payload, baseRevision, idempotencyKey }` — ดูรายการ type ใน `src/server/actions.ts` |
+| `GET /api/report?shop=&from=&to=[&kind=]` | รายงานตามบทบาท / CSV |
+| `POST /api/evidence` → PUT ไฟล์ด้วย signed upload | ขออัปโหลดบิล แล้วส่ง `evidenceId` ใน `saveExpense` (server ตรวจขนาด/sha-256/ชนิดไฟล์ก่อนแนบ) |
+| `GET /api/evidence?shop=&id=` | ลิงก์ดาวน์โหลดอายุ 60 วินาที (owner/manager) |
+| `POST /api/import` | owner นำเข้า backup ของ prototype (รุ่น 1–6) แทนข้อมูลปัจจุบัน |
+| `GET/POST/PATCH /api/members` | ดู / เชิญด้วยอีเมล / เปลี่ยนบทบาทหรือพักสมาชิก (owner) |
+
+หลักการ: ชื่อและบทบาทผู้ทำรายการมาจาก `shop_members` เสมอ (payload ใส่ `person` ไม่ได้);
+ผู้อนุมัติ/ผู้ตรวจบิลเลือกด้วย `userId` ของสมาชิก; สถานะ `400` ข้อมูลผิดรูป · `401` ยังไม่ login · `403` ไม่มีสิทธิ์ ·
+`409` revision ชน (โหลดใหม่แล้วทำซ้ำ) · `422` ผิดกฎธุรกิจ (ข้อความไทยจาก domain)
+
+```sh
+npm test            # domain + db + api
+npm run check:api   # คอมไพล์ api/ แบบ Node ESM (เหมือน Vercel) แล้วเรียก handler จริง
 ```
 
 กฎธุรกิจที่ห้ามเปลี่ยนดูได้ที่ `legacy/docs/DEV_GUIDE.md`

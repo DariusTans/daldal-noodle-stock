@@ -2,10 +2,10 @@
  * "Today's work" list (legacy workflow-core.js) — derived purely from document states,
  * there is no separate task store.
  */
-import { orderStatuses, expenseStatuses, roles } from './constants';
-import { receivingLabel, receivingSummary } from './receive';
-import { stockRows } from './stock';
-import type { Role, ShopState } from './types';
+import { orderStatuses, expenseStatuses, roles } from './constants.js';
+import { receivingLabel, receivingSummary } from './receive.js';
+import { stockRows } from './stock.js';
+import type { Role, ShopState } from './types.js';
 
 export interface WorkflowTask {
   key: string;

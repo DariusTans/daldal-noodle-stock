@@ -1,4 +1,4 @@
-import { fail, isQuantity } from './util';
+import { fail, isQuantity } from './util.js';
 
 /** Parse a count/stock quantity. Blank → null (blank means "not counted", never zero). */
 export function parseQuantity(v: unknown): number | null {

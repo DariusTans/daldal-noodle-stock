@@ -3,7 +3,7 @@
  * Hand-written to match the schema; regenerate with `npm run db:types` once a local
  * Supabase (Docker) or a linked project is available — the shapes must stay identical.
  */
-import type { ShopState } from '../domain/types';
+import type { ShopState } from '../domain/types.js';
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 

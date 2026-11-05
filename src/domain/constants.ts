@@ -1,4 +1,4 @@
-import type { Currency, Role } from './types';
+import type { Currency, Role } from './types.js';
 
 export const SCHEMA_VERSION = 6;
 export const STORAGE_KEY = 'daldal-operations-data';
@@ -76,3 +76,5 @@ export const attachmentTypes = [
 ] as const;
 export const ATTACHMENT_MAX_BYTES = 350000;
 export const ATTACHMENTS_TOTAL_MAX_BYTES = 1400000;
+/** Stored (Supabase Storage) evidence limit — matches the bucket and the evidence table. */
+export const STORED_ATTACHMENT_MAX_BYTES = 5242880;

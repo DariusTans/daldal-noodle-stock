@@ -2,14 +2,20 @@
  * Read-only reports (legacy report-core.js). Purchases and expenses are reported
  * separately and must never be summed together; this is not a sales/profit report.
  */
-import { movementKinds, orderStatuses, expenseStatuses, receiptIssues, roles } from './constants';
-import { can } from './permissions';
-import { nowIso } from './runtime';
-import { receivingLabel, receivingSummary } from './receive';
-import { stockRows } from './stock';
-import type { Currency, ExpenseCategory, Funding, MovementKind, Role, ShopState } from './types';
-import { fail, hasOwn, round3 } from './util';
-import { validate } from './validate';
+import {
+  movementKinds,
+  orderStatuses,
+  expenseStatuses,
+  receiptIssues,
+  roles,
+} from './constants.js';
+import { can } from './permissions.js';
+import { nowIso } from './runtime.js';
+import { receivingLabel, receivingSummary } from './receive.js';
+import { stockRows } from './stock.js';
+import type { Currency, ExpenseCategory, Funding, MovementKind, Role, ShopState } from './types.js';
+import { fail, hasOwn, round3 } from './util.js';
+import { validate } from './validate.js';
 
 export interface DateRange {
   from: string;

@@ -3,9 +3,9 @@
  * exactly like the legacy layered `migrate`. Never mutates the input.
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { ShopState } from './types';
-import { clone, fail } from './util';
-import { validateAt } from './validate';
+import type { ShopState } from './types.js';
+import { clone, fail } from './util.js';
+import { validateAt } from './validate.js';
 
 function toV2(input: any): any {
   if (input?.schemaVersion === 1) {

@@ -332,3 +332,55 @@ describe('state integrity', () => {
     expect(a.events.at(-1)!.time).toBe('2026-01-01T00:00:00.000Z');
   });
 });
+
+describe('stored evidence (Supabase Storage)', () => {
+  const shop = '11111111-1111-4111-8111-111111111111';
+  const ev = '22222222-2222-4222-8222-222222222222';
+  const stored = (over: Partial<D.StoredAttachment> = {}): D.StoredAttachment => ({
+    name: 'bill.pdf',
+    type: 'application/pdf',
+    size: 4_000_000,
+    hash: 'c'.repeat(64),
+    evidenceId: ev,
+    path: `${shop}/${ev}`,
+    ...over,
+  });
+  const draft = (attachment: D.Attachment | null) => ({
+    vendor: 'ร้าน',
+    date: '2026-11-01',
+    amount: '120',
+    currency: 'THB' as const,
+    category: 'อื่น ๆ' as const,
+    funding: 'shop' as const,
+    payer: MANAGER,
+    note: 'บิล',
+    person: MANAGER,
+    attachment,
+    noEvidenceReason: attachment ? '' : 'ไม่มี',
+  });
+
+  it('accepts files up to 5 MB that do not count toward the 1.4 MB inline budget', () => {
+    let s = D.seed();
+    for (let i = 0; i < 3; i++)
+      s = D.saveExpense(s, draft(stored({ hash: String(i).repeat(64) })), 'manager');
+    expect(s.expenses).toHaveLength(3);
+    expect(D.isStoredAttachment(s.expenses[0]!.attachment)).toBe(true);
+  });
+
+  it('rejects malformed references, oversize files and mixed formats', () => {
+    const s = D.seed();
+    const bad = [
+      stored({ path: `../${ev}` }),
+      stored({ path: `${shop}/33333333-3333-4333-8333-333333333333` }),
+      stored({ size: 5_242_881 }),
+      { ...stored(), data: 'x' } as unknown as D.Attachment,
+    ];
+    for (const a of bad) expect(() => D.saveExpense(s, draft(a), 'manager')).toThrow();
+  });
+
+  it('same file hash is flagged as a possible duplicate bill', () => {
+    let s = D.saveExpense(D.seed(), draft(stored()), 'manager');
+    s = D.saveExpense(s, { ...draft(stored()), vendor: 'ร้านอื่น', amount: '99' }, 'manager');
+    expect(D.expenseWarnings(s, s.expenses[1]!)).toContain('สงสัยซ้ำกับ ' + s.expenses[0]!.id);
+  });
+});

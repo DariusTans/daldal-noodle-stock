@@ -1,7 +1,7 @@
 /** Sample bill image used by the demo dataset (generated from the legacy demo). */
-import type { Attachment } from './types';
+import type { InlineAttachment } from './types.js';
 
-export const demoProof: Attachment = {
+export const demoProof: InlineAttachment = {
   name: 'DEMO-BILL-1.png',
   type: 'image/png',
   size: 22322,

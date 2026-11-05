@@ -1,5 +1,5 @@
-import { roles } from './constants';
-import { hasOwn } from './util';
+import { roles } from './constants.js';
+import { hasOwn } from './util.js';
 
 /**
  * Action → who may perform it. Same decision table as the layered legacy `can`.

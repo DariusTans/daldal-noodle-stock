@@ -6,57 +6,57 @@
  * which is exactly the composed behaviour of the legacy layered prototype (v0.8.1),
  * verified by tests/domain/parity.test.ts.
  */
-import * as buy from './buy';
-import * as counts from './counts';
-import * as expense from './expense';
-import * as master from './master';
-import * as receive from './receive';
-import * as stock from './stock';
-import type { ShopState } from './types';
-import { fail, normRef } from './util';
-import { validate } from './validate';
+import * as buy from './buy.js';
+import * as counts from './counts.js';
+import * as expense from './expense.js';
+import * as master from './master.js';
+import * as receive from './receive.js';
+import * as stock from './stock.js';
+import type { ShopState } from './types.js';
+import { fail, normRef } from './util.js';
+import { validate } from './validate.js';
 
-export * from './constants';
-export * from './types';
-export { can, type Action } from './permissions';
-export { DomainError } from './util';
-export { withRuntime, type Runtime } from './runtime';
-export { validate, validateAt } from './validate';
-export { migrate } from './migrate';
-export { seed } from './seed';
-export { parseQuantity } from './quantity';
-export { parseMoney, parseExpenseAmount, formatMinor } from './money';
-export { latestCounts, hasOpenCount, lineNeedsReason } from './counts';
-export { stockRows } from './stock';
+export * from './constants.js';
+export * from './types.js';
+export { can, type Action } from './permissions.js';
+export { DomainError } from './util.js';
+export { withRuntime, type Runtime } from './runtime.js';
+export { validate, validateAt } from './validate.js';
+export { migrate } from './migrate.js';
+export { seed } from './seed.js';
+export { parseQuantity } from './quantity.js';
+export { parseMoney, parseExpenseAmount, formatMinor } from './money.js';
+export { latestCounts, hasOpenCount, lineNeedsReason } from './counts.js';
+export { stockRows } from './stock.js';
 export {
   quoteTotal,
   orderSourceStale,
   orderPolicyStale,
   needsApproval,
   selectedOffer,
-} from './buy';
-export { receivingSummary, receivingLabel } from './receive';
-export { expenseDuplicates, expenseWarnings, expenseTotals, bangkokToday } from './expense';
-export { report, reportCSV, reportDay, reportRange } from './report';
-export type { Report, ReportKind, DateRange } from './report';
-export { workflowTasks, type WorkflowTask } from './workflow';
-export type { IngredientInput, UnitInput } from './master';
-export type { CountUpdate } from './counts';
-export type { MovementInput, PolicyInput, RequestReviewInput } from './stock';
+} from './buy.js';
+export { receivingSummary, receivingLabel } from './receive.js';
+export { expenseDuplicates, expenseWarnings, expenseTotals, bangkokToday } from './expense.js';
+export { report, reportCSV, reportDay, reportRange } from './report.js';
+export type { Report, ReportKind, DateRange } from './report.js';
+export { workflowTasks, type WorkflowTask } from './workflow.js';
+export type { IngredientInput, UnitInput } from './master.js';
+export type { CountUpdate } from './counts.js';
+export type { MovementInput, PolicyInput, RequestReviewInput } from './stock.js';
 export type {
   PurchasePolicyInput,
   SourceReviewInput,
   OfferInput,
   MarkOrderedInput,
   DecideAction,
-} from './buy';
-export type { ReceiptInput, ConfirmReceiptInput, CloseReceivingInput } from './receive';
+} from './buy.js';
+export type { ReceiptInput, ConfirmReceiptInput, CloseReceivingInput } from './receive.js';
 export type {
   ExpenseReviewerInput,
   ExpenseInput,
   ExpenseReviewInput,
   ExpenseNoteInput,
-} from './expense';
+} from './expense.js';
 
 type Op<A extends unknown[]> = (state: ShopState, ...args: A) => ShopState;
 

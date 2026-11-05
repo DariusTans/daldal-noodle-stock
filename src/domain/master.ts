@@ -1,9 +1,9 @@
 /** Master data: ingredients and units (legacy core.js). Raw ops — public API wraps with validation. */
-import { ingredientCategories, roles, unitTypes } from './constants';
-import { can } from './permissions';
-import { nowIso, uid } from './runtime';
-import type { Ingredient, Role, ShopState, Unit } from './types';
-import { clone, fail, normName } from './util';
+import { ingredientCategories, roles, unitTypes } from './constants.js';
+import { can } from './permissions.js';
+import { nowIso, uid } from './runtime.js';
+import type { Ingredient, Role, ShopState, Unit } from './types.js';
+import { clone, fail, normName } from './util.js';
 
 const clean = (x: unknown): string => (typeof x === 'string' ? x.trim() : '');
 

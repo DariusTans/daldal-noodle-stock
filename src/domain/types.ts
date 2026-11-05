@@ -10,7 +10,7 @@ import type {
   orderStatuses,
   receiptIssues,
   unitTypes,
-} from './constants';
+} from './constants.js';
 
 export type Role = 'owner' | 'manager' | 'staff';
 export type ReviewerRole = Exclude<Role, 'staff'>;
@@ -383,15 +383,32 @@ export type ExpenseCategory = (typeof expenseCategories)[number];
 export type Funding = 'shop' | 'personal';
 export type AttachmentType = (typeof attachmentTypes)[number];
 
-export interface Attachment {
+interface AttachmentBase {
   name: string;
   type: AttachmentType;
   size: number;
-  /** sha-256 hex */
+  /** sha-256 hex — also used for duplicate-bill detection */
   hash: string;
-  /** data: URL (prototype). The server will replace this with a storage path. */
+}
+
+/** Prototype format: file embedded as a data: URL (≤ 350 KB, ≤ 1.4 MB per state). */
+export interface InlineAttachment extends AttachmentBase {
   data: string;
 }
+
+/** Server format: file in the private Supabase Storage bucket `evidence` (≤ 5 MB). */
+export interface StoredAttachment extends AttachmentBase {
+  evidenceId: string;
+  /** `<shop_id>/<evidence_id>` */
+  path: string;
+}
+
+export type Attachment = InlineAttachment | StoredAttachment;
+
+export const isStoredAttachment = (a: Attachment | null | undefined): a is StoredAttachment =>
+  !!a &&
+  typeof (a as InlineAttachment).data !== 'string' &&
+  typeof (a as StoredAttachment).path === 'string';
 
 export interface ExpenseReviewer {
   id: string;

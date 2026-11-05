@@ -2,16 +2,10 @@
  * Database schema tests: runs the real supabase/migrations in PGlite (embedded Postgres 17)
  * on top of a minimal Supabase stub, then checks the write path and row-level security.
  */
-import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { PGlite, type Transaction } from '@electric-sql/pglite';
+import { type PGlite, type Transaction } from '@electric-sql/pglite';
 import { beforeAll, describe, expect, it } from 'vitest';
 import * as D from '../../src/domain';
-
-const root = join(import.meta.dirname, '..', '..');
-const migrations = readdirSync(join(root, 'supabase', 'migrations'))
-  .filter((f) => f.endsWith('.sql'))
-  .sort();
+import { freshDatabase, migrationFiles as migrations } from './pglite';
 
 let db: PGlite;
 const users = {
@@ -84,10 +78,7 @@ const state = async (shop: string) =>
   ).rows[0]!;
 
 beforeAll(async () => {
-  db = new PGlite();
-  await db.exec(readFileSync(join(import.meta.dirname, 'supabase-stub.sql'), 'utf8'));
-  for (const f of migrations)
-    await db.exec(readFileSync(join(root, 'supabase', 'migrations', f), 'utf8'));
+  db = await freshDatabase();
   for (const [name, id] of Object.entries(users))
     await db.query(`insert into auth.users (id, email) values ($1, $2)`, [
       id,

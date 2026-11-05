@@ -1,5 +1,5 @@
-import type { Minor } from './types';
-import { fail } from './util';
+import type { Minor } from './types.js';
+import { fail } from './util.js';
 
 /** Purchase money input → minor units. Zero allowed. */
 export function parseMoney(v: unknown): Minor {

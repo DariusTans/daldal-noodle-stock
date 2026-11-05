@@ -2,16 +2,23 @@
  * Demo dataset (legacy demo-data.js): built by running the real operations, so every
  * record is consistent with the rules. Purchases 530 THB / confirmed expenses 500 THB.
  */
-import { demoProof } from './demo-proof';
-import * as D from './index';
-import { nowIso } from './runtime';
-import type { ShopState } from './types';
+import { demoProof } from './demo-proof.js';
+import * as D from './index.js';
+import { nowIso } from './runtime.js';
+import type { ShopState } from './types.js';
 
-export function demoSeed(): ShopState {
+export interface DemoNames {
+  owner?: string;
+  manager?: string;
+  staff?: string;
+}
+
+/** `names.owner` becomes the configured purchase approver and expense reviewer. */
+export function demoSeed(names: DemoNames = {}): ShopState {
   let s = D.seed();
-  const staff = 'พนักงานตัวอย่าง',
-    manager = 'ผู้จัดการตัวอย่าง',
-    owner = 'เจ้าของตัวอย่าง',
+  const staff = names.staff ?? 'พนักงานตัวอย่าง',
+    manager = names.manager ?? 'ผู้จัดการตัวอย่าง',
+    owner = names.owner ?? 'เจ้าของตัวอย่าง',
     day = D.reportDay(nowIso());
   s = D.startCount(s, 'นับเปิดร้าน · ข้อมูลตัวอย่าง', staff, 'staff');
   const r = s.countRounds[0]!;

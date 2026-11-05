@@ -3,13 +3,13 @@
  * draft/returned → pending → approved/cleared → ordered; rejected/cancelled close the order.
  * Raw ops — the public API validates input/output.
  */
-import { currencies } from './constants';
-import { hasOpenCount } from './counts';
-import { parseMoney } from './money';
-import { can } from './permissions';
-import { positiveQuantity } from './quantity';
-import { nowIso, nowMs, uid } from './runtime';
-import { stockRows } from './stock';
+import { currencies } from './constants.js';
+import { hasOpenCount } from './counts.js';
+import { parseMoney } from './money.js';
+import { can } from './permissions.js';
+import { positiveQuantity } from './quantity.js';
+import { nowIso, nowMs, uid } from './runtime.js';
+import { stockRows } from './stock.js';
 import type {
   Currency,
   Offer,
@@ -20,8 +20,8 @@ import type {
   QuoteTotal,
   Role,
   ShopState,
-} from './types';
-import { clone, fail, isStamp, isText, required } from './util';
+} from './types.js';
+import { clone, fail, isStamp, isText, required } from './util.js';
 
 const req = (v: unknown, n = 500, message = 'กรอกข้อมูลให้ครบ') => required(v, n, message);
 const CLOSED: OrderStatus[] = ['rejected', 'cancelled', 'ordered'];

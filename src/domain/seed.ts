@@ -1,4 +1,4 @@
-import type { ShopState } from './types';
+import type { ShopState } from './types.js';
 
 /** Starter shop: 6 units and 8 sample ingredients (the 8th inactive), no history. */
 export function seed(): ShopState {

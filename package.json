@@ -21,7 +21,8 @@
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
     "db:push": "supabase db push",
-    "db:types": "supabase gen types typescript --local > src/db/database.generated.ts"
+    "db:types": "supabase gen types typescript --local > src/db/database.generated.ts",
+    "check:api": "node scripts/check-api.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.3",

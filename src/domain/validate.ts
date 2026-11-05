@@ -6,7 +6,7 @@
  * Inputs are untrusted (imports, backups), so the checks operate on `any`.
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { assertValidPolicy, quoteTotal } from './buy';
+import { assertValidPolicy, quoteTotal } from './buy.js';
 import {
   ATTACHMENTS_TOTAL_MAX_BYTES,
   countStatuses,
@@ -19,14 +19,14 @@ import {
   receiptIssues,
   roles,
   unitTypes,
-} from './constants';
-import { assertValidAttachment, isValidDate } from './expense';
-import { can } from './permissions';
-import { positiveQuantity } from './quantity';
-import { orderedOrder, receivingSummary } from './receive';
-import { movementsFor } from './stock';
-import type { ShopState } from './types';
-import { fail, hasOwn, isQuantity, isStamp, isText, normName, normRef, round3 } from './util';
+} from './constants.js';
+import { assertValidAttachment, isValidDate } from './expense.js';
+import { can } from './permissions.js';
+import { positiveQuantity } from './quantity.js';
+import { orderedOrder, receivingSummary } from './receive.js';
+import { movementsFor } from './stock.js';
+import type { ShopState } from './types.js';
+import { fail, hasOwn, isQuantity, isStamp, isText, normName, normRef, round3 } from './util.js';
 
 type Level = 1 | 2 | 3 | 4 | 5 | 6;
 const text = isText;
@@ -672,7 +672,8 @@ function v6(s: any) {
       fail('ใบซื้ออ้างอิงไม่ถูกต้อง');
     if (e.attachment) {
       assertValidAttachment(e.attachment);
-      bytes += e.attachment.size;
+      // Only inline (data URL) evidence counts toward the in-document size budget.
+      if (typeof e.attachment.data === 'string') bytes += e.attachment.size;
     } else if (!text(e.noEvidenceReason)) fail('ระบุเหตุผลที่ไม่มีหลักฐาน');
     for (const a of e.audit)
       if (
