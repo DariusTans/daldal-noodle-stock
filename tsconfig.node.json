@@ -14,5 +14,5 @@
     "types": ["node"],
     "paths": { "@/*": ["./src/*"] }
   },
-  "include": ["vite.config.ts", "api", "tests", "src/domain"]
+  "include": ["vite.config.ts", "api", "tests", "src/domain", "src/db"]
 }
