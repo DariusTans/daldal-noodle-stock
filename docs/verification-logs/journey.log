@@ -1,0 +1,10 @@
+TEST journey-browser.cjs
+CHECKPOINT ตั้งวัตถุดิบ หน่วย จุดเตือน 5 เป้าหมาย 15
+CHECKPOINT นับ 10 เบิก 7 คำนวณ 3 อ้างอิงยัง 10
+CHECKPOINT ตรวจความครบและเสนอซื้อ 12
+CHECKPOINT อนุมัติซื้อ 600 บาท สต็อกยัง 3
+CHECKPOINT รับ 8+4 ปิดรับ ตรวจครบ อ้างอิง 15 ไม่เตือน
+CHECKPOINT บิล 600 ยืนยันแล้ว สต็อกไม่เปลี่ยน
+CHECKPOINT Dashboard ซื้อ600 ค่าใช้จ่าย600 แยกกัน CSV และต้นทางตรง
+PASS full journey: all mutations through UI, no injected completed state, setup→count→use→check→request→buy→partial receipts→expense→dashboard→CSV/source
+1 suites; 0 failed

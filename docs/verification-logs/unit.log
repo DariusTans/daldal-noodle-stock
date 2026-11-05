@@ -1,0 +1,15 @@
+TEST buy.test.cjs
+PASS: v3 migration, source links/duplicates, quote pack rounding and money, currency, missing policy gate, threshold equality and above, named-role review, return/reject, revised approval invalidation, policy/source stale guards, purchased snapshot without stock increase, import validation
+TEST core.test.cjs
+PASS: CRUD, role guards, duplicate checks, stable IDs, unit references, archive/restore, backup schema
+TEST counts.test.cjs
+PASS: v1 migration, empty vs zero, partial drafts, corrections with reasons, submit/return/confirm roles, locked history, snapshots, previous-count comparison, cancellation and restore
+TEST expense.test.cjs
+PASS expense: migration, roles, money/evidence validation, reviewer gate, return/edit audit, exception acknowledgement, confirmed-only currency totals, stale policy, cancellation, duplicate warning, no stock mutation, import validation
+TEST receive.test.cjs
+PASS receiving: migration, partial/quality rejects, roles, exactly-once stock, void trace, duplicate/blank/excess guards, issue resolution, full/short close, repeat purchase, count-anchor safety, corrupt import checks
+TEST report.test.cjs
+PASS reports: Thai date boundaries, inclusive range, current snapshot independent of range, verified stock fallback, confirmed-only totals, currencies separate, draft/cancel excluded, source links, staff gates, CSV formula escaping, read-only state
+TEST stock.test.cjs
+PASS: v2 migration preserving rounds; all movement kinds, non-negative balances, role guards, completeness fallback/invalidation, threshold equality, stale/duplicate proposals, review/cancel, immutable reversals, new count expected quantity without double counting, corrupt import validation
+7 suites; 0 failed

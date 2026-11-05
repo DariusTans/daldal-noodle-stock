@@ -1,0 +1,64 @@
+TEST browser.cjs
+Error: Cannot find module 'test-output/daldal-backup-test.json'
+Require stack:
+- /Users/gittipong/Projects/Business consult/Workspace/Daldal_Dev_Handover_v0.8.1_2026-11-02/tests/browser.cjs
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1564:15)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1118:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1142:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1169:12)
+    at Module._load (node:internal/modules/cjs/loader:1341:5)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.require (node:internal/modules/cjs/loader:1674:12)
+    at require (node:internal/modules/helpers:157:16)
+    at /Users/gittipong/Projects/Business consult/Workspace/Daldal_Dev_Handover_v0.8.1_2026-11-02/tests/browser.cjs:8:196 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/gittipong/Projects/Business consult/Workspace/Daldal_Dev_Handover_v0.8.1_2026-11-02/tests/browser.cjs'
+  ]
+}
+TEST buy-browser.cjs
+PASS: browser v3 migration/backup, hidden staff prices, create/quote/select, missing-policy block, named reviewer return/approve, revise price forces review, record purchased without stock, persistence/import, cross-tab guard, desktop/mobile, no page errors
+TEST counts-browser.cjs
+PASS: v1 migration and backup, zero versus blank, draft reload, full review/return/correct/confirm, role gates, last confirmed only, previous baseline, cross-tab stale edit guard, mobile, no browser errors
+TEST demo-browser.cjs
+PASS demo: valid linked data, all pages populated, evidence image, dashboard 500, reload persists, original storage untouched, mode switching and mobile
+TEST evidence-browser.cjs
+PASS evidence: image decoded, desktop side-by-side, mobile proof/data tabs, image download, PDF fallback download, reason hidden with evidence
+TEST expense-browser.cjs
+PASS expense browser: v5 migration/backup, roles/reviewer, file upload preserved through edits/export/import/download, return/review/name gate, totals/cancellation, reload, cross-tab, desktop/mobile
+TEST journey-browser.cjs
+CHECKPOINT ตั้งวัตถุดิบ หน่วย จุดเตือน 5 เป้าหมาย 15
+CHECKPOINT นับ 10 เบิก 7 คำนวณ 3 อ้างอิงยัง 10
+CHECKPOINT ตรวจความครบและเสนอซื้อ 12
+CHECKPOINT อนุมัติซื้อ 600 บาท สต็อกยัง 3
+CHECKPOINT รับ 8+4 ปิดรับ ตรวจครบ อ้างอิง 15 ไม่เตือน
+CHECKPOINT บิล 600 ยืนยันแล้ว สต็อกไม่เปลี่ยน
+CHECKPOINT Dashboard ซื้อ600 ค่าใช้จ่าย600 แยกกัน CSV และต้นทางตรง
+PASS full journey: all mutations through UI, no injected completed state, setup→count→use→check→request→buy→partial receipts→expense→dashboard→CSV/source
+TEST receive-browser.cjs
+PASS receiving browser: v4 migration/backup, staff draft/no prices, manager confirm exactly-once, issues/closure, linked stock and completed request, persistence/JSON import, cross-tab stale guard, desktop/mobile
+TEST report-browser.cjs
+PASS reports: Thai date boundaries, inclusive range, current snapshot independent of range, verified stock fallback, confirmed-only totals, currencies separate, draft/cancel excluded, source links, staff gates, CSV formula escaping, read-only state
+PASS report browser: period filter and invalid range, totals and separate currencies, CSV download, exact expense/purchase/receipt navigation, empty period retains current tasks, read-only storage, staff financial hiding, cross-tab refresh, mobile/table overflow
+TEST stock-browser.cjs
+Error: Cannot find module 'test-output/daldal-round3-backup.json'
+Require stack:
+- /Users/gittipong/Projects/Business consult/Workspace/Daldal_Dev_Handover_v0.8.1_2026-11-02/tests/stock-browser.cjs
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1564:15)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1118:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1142:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1169:12)
+    at Module._load (node:internal/modules/cjs/loader:1341:5)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.require (node:internal/modules/cjs/loader:1674:12)
+    at require (node:internal/modules/helpers:157:16)
+    at /Users/gittipong/Projects/Business consult/Workspace/Daldal_Dev_Handover_v0.8.1_2026-11-02/tests/stock-browser.cjs:11:165 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/gittipong/Projects/Business consult/Workspace/Daldal_Dev_Handover_v0.8.1_2026-11-02/tests/stock-browser.cjs'
+  ]
+}
+TEST ux-browser.cjs
+PASS: v3 migration, source links/duplicates, quote pack rounding and money, currency, missing policy gate, threshold equality and above, named-role review, return/reject, revised approval invalidation, policy/source stale guards, purchased snapshot without stock increase, import validation
+PASS UX: dirty cancel/accept/hash/role, saved draft reload, compact mobile safe area, wizard validation/back/cancel, derived role tasks no mutation, UI reject purchase, UI duplicate/no-proof acknowledgement, refresh and repeated action guards
+11 suites; 2 failed

@@ -1,0 +1,4 @@
+const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.svg':'image/svg+xml'};
+http.createServer((req,res)=>{let f;try{f=path.resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));}catch{res.writeHead(400).end();return;}if(f!==root&&!f.startsWith(root+path.sep)){res.writeHead(403).end();return;}if(f===root)f=path.join(root,'index.html');fs.readFile(f,(err,data)=>{if(err){res.writeHead(404).end('Not found');return;}res.setHeader('Content-Type',types[path.extname(f)]||'application/octet-stream');res.end(data);});}).listen(8785,'127.0.0.1',()=>console.log('DALDAL: http://127.0.0.1:8785/ (local development only)'));

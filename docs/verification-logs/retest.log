@@ -1,0 +1,4 @@
+RETEST browser.cjs
+PASS: browser CRUD, reload persistence, duplicate rejection, archive/restore, roles, units, JSON backup/import, multi-tab sync, mobile, corrupt-storage preservation; no browser errors
+RETEST stock-browser.cjs
+PASS: UI migration with v2 data, usage/negative guard, completeness review, policy, purchase draft/review/reason/cancel/refresh, reversal, cross-tab modal conflict, backup/import all new data, desktop/mobile, zero page errors

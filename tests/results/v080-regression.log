@@ -1,0 +1,64 @@
+tests/buy.test.cjs
+PASS: v3 migration, source links/duplicates, quote pack rounding and money, currency, missing policy gate, threshold equality and above, named-role review, return/reject, revised approval invalidation, policy/source stale guards, purchased snapshot without stock increase, import validation
+
+tests/core.test.cjs
+PASS: CRUD, role guards, duplicate checks, stable IDs, unit references, archive/restore, backup schema
+
+tests/counts.test.cjs
+PASS: v1 migration, empty vs zero, partial drafts, corrections with reasons, submit/return/confirm roles, locked history, snapshots, previous-count comparison, cancellation and restore
+
+tests/expense.test.cjs
+PASS expense: migration, roles, money/evidence validation, reviewer gate, return/edit audit, exception acknowledgement, confirmed-only currency totals, stale policy, cancellation, duplicate warning, no stock mutation, import validation
+
+tests/receive.test.cjs
+PASS receiving: migration, partial/quality rejects, roles, exactly-once stock, void trace, duplicate/blank/excess guards, issue resolution, full/short close, repeat purchase, count-anchor safety, corrupt import checks
+
+tests/report.test.cjs
+PASS reports: Thai date boundaries, inclusive range, current snapshot independent of range, verified stock fallback, confirmed-only totals, currencies separate, draft/cancel excluded, source links, staff gates, CSV formula escaping, read-only state
+
+tests/stock.test.cjs
+PASS: v2 migration preserving rounds; all movement kinds, non-negative balances, role guards, completeness fallback/invalidation, threshold equality, stale/duplicate proposals, review/cancel, immutable reversals, new count expected quantity without double counting, corrupt import validation
+
+tests/browser.cjs
+PASS: browser CRUD, reload persistence, duplicate rejection, archive/restore, roles, units, JSON backup/import, multi-tab sync, mobile, corrupt-storage preservation; no browser errors
+
+tests/counts-browser.cjs
+PASS: v1 migration and backup, zero versus blank, draft reload, full review/return/correct/confirm, role gates, last confirmed only, previous baseline, cross-tab stale edit guard, mobile, no browser errors
+
+tests/stock-browser.cjs
+PASS: UI migration with v2 data, usage/negative guard, completeness review, policy, purchase draft/review/reason/cancel/refresh, reversal, cross-tab modal conflict, backup/import all new data, desktop/mobile, zero page errors
+
+tests/buy-browser.cjs
+PASS: browser v3 migration/backup, hidden staff prices, create/quote/select, missing-policy block, named reviewer return/approve, revise price forces review, record purchased without stock, persistence/import, cross-tab guard, desktop/mobile, no page errors
+
+tests/receive-browser.cjs
+PASS receiving browser: v4 migration/backup, staff draft/no prices, manager confirm exactly-once, issues/closure, linked stock and completed request, persistence/JSON import, cross-tab stale guard, desktop/mobile
+
+tests/expense-browser.cjs
+PASS expense browser: v5 migration/backup, roles/reviewer, file upload preserved through edits/export/import/download, return/review/name gate, totals/cancellation, reload, cross-tab, desktop/mobile
+
+tests/report-browser.cjs
+PASS reports: Thai date boundaries, inclusive range, current snapshot independent of range, verified stock fallback, confirmed-only totals, currencies separate, draft/cancel excluded, source links, staff gates, CSV formula escaping, read-only state
+PASS report browser: period filter and invalid range, totals and separate currencies, CSV download, exact expense/purchase/receipt navigation, empty period retains current tasks, read-only storage, staff financial hiding, cross-tab refresh, mobile/table overflow
+
+tests/ux-browser.cjs
+PASS: v3 migration, source links/duplicates, quote pack rounding and money, currency, missing policy gate, threshold equality and above, named-role review, return/reject, revised approval invalidation, policy/source stale guards, purchased snapshot without stock increase, import validation
+PASS UX: dirty cancel/accept/hash/role, saved draft reload, compact mobile safe area, wizard validation/back/cancel, derived role tasks no mutation, UI reject purchase, UI duplicate/no-proof acknowledgement, refresh and repeated action guards
+
+tests/journey-browser.cjs
+CHECKPOINT ตั้งวัตถุดิบ หน่วย จุดเตือน 5 เป้าหมาย 15
+CHECKPOINT นับ 10 เบิก 7 คำนวณ 3 อ้างอิงยัง 10
+CHECKPOINT ตรวจความครบและเสนอซื้อ 12
+CHECKPOINT อนุมัติซื้อ 600 บาท สต็อกยัง 3
+CHECKPOINT รับ 8+4 ปิดรับ ตรวจครบ อ้างอิง 15 ไม่เตือน
+CHECKPOINT บิล 600 ยืนยันแล้ว สต็อกไม่เปลี่ยน
+CHECKPOINT Dashboard ซื้อ600 ค่าใช้จ่าย600 แยกกัน CSV และต้นทางตรง
+PASS full journey: all mutations through UI, no injected completed state, setup→count→use→check→request→buy→partial receipts→expense→dashboard→CSV/source
+
+
+Final UX layout checks after paired evidence layout and local handoff focus refinement:
+PASS evidence-browser.cjs: decoded image, desktop side-by-side, mobile tabs, image and PDF fallback download
+PASS expense-browser.cjs
+PASS ux-browser.cjs
+PASS journey-browser.cjs (mixed)
+PASS journey-browser.cjs (all-mobile before desktop-only evidence layout refinement)
