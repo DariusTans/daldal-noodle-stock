@@ -1,6 +1,6 @@
 -- Minimal stand-in for the parts of Supabase our migrations depend on, so they can run in
 -- PGlite (embedded Postgres) during tests without Docker. Mirrors Supabase defaults that
--- matter for security: the three API roles, default grants on public, auth.uid(), and an
+-- matter for security: the three API roles, no default table grants on public, auth.uid(), and an
 -- RLS-enabled storage.objects table.
 
 create role anon nologin noinherit;
@@ -9,9 +9,8 @@ create role service_role nologin noinherit bypassrls;
 
 grant usage on schema public to anon, authenticated, service_role;
 
--- Supabase: new tables/functions in public are granted to the API roles by default.
-alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
-alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;
+-- Supabase: new tables/sequences in public are NOT granted to the API roles (default for new
+-- projects since 2026, service_role included), so migrations must grant them explicitly.
 alter default privileges in schema public grant execute on functions to anon, authenticated, service_role;
 
 create schema auth;
